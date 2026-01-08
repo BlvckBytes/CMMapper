@@ -34,17 +34,11 @@ import java.util.stream.Collectors;
 public class ConfigMapper implements IConfigMapper {
 
   private final IConfig config;
+  private final ValueConverter valueConverter;
 
-  private final @Nullable IValueConverterRegistry converterRegistry;
-
-  /**
-   * Create a new config reader on a {@link IConfig}
-   * @param config Configuration to read from
-   * @param converterRegistry Optional registry of custom value converters
-   */
-  public ConfigMapper(IConfig config, @Nullable IValueConverterRegistry converterRegistry) {
+  public ConfigMapper(IConfig config, ValueConverter valueConverter) {
     this.config = config;
-    this.converterRegistry = converterRegistry;
+    this.valueConverter = valueConverter;
   }
 
   @Override
@@ -91,24 +85,14 @@ public class ConfigMapper implements IConfigMapper {
 
             fieldType = decidedType;
           }
-
-          FValueConverter converter = null;
-          if (converterRegistry != null) {
-            Class<?> requiredType = converterRegistry.getRequiredTypeFor(fieldType);
-            converter = converterRegistry.getConverterFor(fieldType);
-
-            if (requiredType != null && converter != null)
-              fieldType = requiredType;
-          }
-
           Object value = resolveFieldValue(root, source, f, fieldType);
 
           // Couldn't resolve a non-null value, try to ask for a default value
           if (value == null)
             value = instance.defaultFor(f);
 
-          if (value != null && converter != null)
-            value = converter.apply(value);
+          if (value != null && !fieldType.isInstance(value))
+            value = valueConverter.convert(value, fieldType);
 
           // Only set if the value isn't null, as the default constructor
           // might have already assigned some default value earlier
@@ -221,22 +205,14 @@ public class ConfigMapper implements IConfigMapper {
     if (input == null)
       return null;
 
-    FValueConverter converter = null;
-    if (converterRegistry != null) {
-      Class<?> requiredType = converterRegistry.getRequiredTypeFor(type);
-      converter = converterRegistry.getConverterFor(type);
+    if (!type.isInstance(input))
+      input = valueConverter.convert(input, type);
 
-      if (requiredType != null && converter != null)
-        type = requiredType;
-    }
-
-    // Requested plain object
-    if (type == Object.class) {
-      if (converter != null)
-        input = converter.apply(input);
-
+    if (type.isInstance(input))
       return input;
-    }
+
+    if (type == Object.class)
+      return input;
 
     if (type.isEnum()) {
       String upperInput = input.toString().toUpperCase(Locale.ROOT);
@@ -260,10 +236,7 @@ public class ConfigMapper implements IConfigMapper {
 
       Object value = mapSectionSub(null, (Map<?, ?>) input, type.asSubclass(AConfigSection.class));
 
-      if (converter != null)
-        value = converter.apply(value);
-
-      return value;
+      return convertType(value, type);
     }
 
     if (type == String.class)

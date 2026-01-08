@@ -59,19 +59,19 @@ public class TestHelper {
    * @return Mapper instance, operating on the configuration instance
    */
   public IConfigMapper makeMapper(String fileName) throws FileNotFoundException {
-    return makeMapper(fileName, null);
+    return makeMapper(fileName, (input, type) -> input);
   }
 
   /**
    * Create a new config instance on the provided path and then create a
    * new mapper instance on top of that configuration instance
    * @param fileName Input file within the resources folder
-   * @param converterRegistry Optional registry of custom value converters
+   * @param valueConverter Value converter to be used
    * @return Mapper instance, operating on the configuration instance
    */
-  public IConfigMapper makeMapper(String fileName, IValueConverterRegistry converterRegistry) throws FileNotFoundException {
+  public IConfigMapper makeMapper(String fileName, ValueConverter valueConverter) throws FileNotFoundException {
     YamlConfig config = makeConfig(fileName);
-    return new ConfigMapper(config, converterRegistry);
+    return new ConfigMapper(config, valueConverter);
   }
 
   /**

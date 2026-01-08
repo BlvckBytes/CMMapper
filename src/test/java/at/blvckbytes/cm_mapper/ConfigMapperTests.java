@@ -25,7 +25,6 @@
 package at.blvckbytes.cm_mapper;
 
 import at.blvckbytes.cm_mapper.sections.*;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -327,28 +326,14 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapCustomObject() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("custom_object.yml", getCustomObjectConverterRegistry());
+    IConfigMapper mapper = helper.makeMapper("custom_object.yml", (input, type) -> {
+      if (type == CustomObject.class)
+        return new CustomObject(String.valueOf(input));
+      return input;
+    });
+
     CustomObjectSection section = mapper.mapSection(null, CustomObjectSection.class);
 
     assertEquals("Hello, world", section.getCustomObject().value);
-  }
-
-  private IValueConverterRegistry getCustomObjectConverterRegistry() {
-    return new IValueConverterRegistry() {
-
-      @Override
-      public @Nullable Class<?> getRequiredTypeFor(Class<?> type) {
-        if (type == CustomObject.class)
-          return String.class;
-        return null;
-      }
-
-      @Override
-      public @Nullable FValueConverter getConverterFor(Class<?> type) {
-        if (type == CustomObject.class)
-          return value -> new CustomObject(((String) value));
-        return null;
-      }
-    };
   }
 }

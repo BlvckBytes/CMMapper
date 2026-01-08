@@ -39,8 +39,23 @@ import org.yaml.snakeyaml.representer.Representer;
 import java.io.*;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class YamlConfig implements IConfig {
+
+  private interface ExtensionCandidateHandler {
+    boolean wasMissingAndHasBeenExtended(NodeTuple tuple, String pathOfTuple, int indexOfTuple);
+  }
+
+  private interface MappingNodeConsumer {
+    void accept(MappingNode currentContainer, ScalarNode currentKey, MappingNode currentValue);
+  }
+
+  private record MergedNodeTuple(
+    NodeTuple handle,
+    Runnable addRoutine,
+    Supplier<Boolean> removeRoutine
+  ) {}
 
   private record LocateNodeResult(@Nullable Node node, Stack<MappingNode> containerStack) {
     @Nullable MappingNode getLastContainer() {
@@ -183,7 +198,7 @@ public class YamlConfig implements IConfig {
         mergedTuples.add(mergedTuple);
 
         // Initially call the add routine
-        mergedTuple.addRoutine.run();
+        mergedTuple.addRoutine().run();
       }
     }
   }
@@ -262,12 +277,12 @@ public class YamlConfig implements IConfig {
       // If the remove routine yielded false, the element has no longer been in the list
       // This means that somebody else removed it, and it thus should also not be added back later on
       // Thus, remove it from the merged tuples list
-      this.mergedTuples.removeIf(mergedTuple -> !mergedTuple.removeRoutine.get());
+      this.mergedTuples.removeIf(mergedTuple -> !mergedTuple.removeRoutine().get());
 
       executable.run();
 
       for (MergedNodeTuple mergedTuple : this.mergedTuples)
-        mergedTuple.addRoutine.run();
+        mergedTuple.addRoutine().run();
     }
   }
 
@@ -389,7 +404,7 @@ public class YamlConfig implements IConfig {
     });
   }
 
-  private int forEachKeyPathRecursively(MappingNode node, @Nullable String parentPath, FExtensionCandidateHandler handler) {
+  private int forEachKeyPathRecursively(MappingNode node, @Nullable String parentPath, ExtensionCandidateHandler handler) {
     int updatedKeys = 0;
 
     List<NodeTuple> nodeTuples = node.getValue();
@@ -403,7 +418,7 @@ public class YamlConfig implements IConfig {
         String keyPath = parentPath != null ? parentPath + "." + keyString : keyString;
 
         // Take the whole node from the other config in order to also carry over comments, formatting, etc
-        boolean didConsumerUpdate = handler.apply(tuple, keyPath, tupleIndex);
+        boolean didConsumerUpdate = handler.wasMissingAndHasBeenExtended(tuple, keyPath, tupleIndex);
 
         if (didConsumerUpdate)
           ++updatedKeys;
@@ -598,7 +613,7 @@ public class YamlConfig implements IConfig {
    * @param node Parent mapping node
    * @param consumer Mapping node consumer
    */
-  private void forAllMappingsRecursively(MappingNode node, FMappingNodeConsumer consumer) {
+  private void forAllMappingsRecursively(MappingNode node, MappingNodeConsumer consumer) {
     List<NodeTuple> tupleList = node.getValue();
     int currentTupleIndex = 0;
 
