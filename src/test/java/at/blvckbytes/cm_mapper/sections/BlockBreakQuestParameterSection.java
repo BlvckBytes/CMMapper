@@ -24,12 +24,12 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class BlockBreakQuestParameterSection extends AConfigSection {
+public class BlockBreakQuestParameterSection extends ConfigSection {
 
   private String material;
   private String world;

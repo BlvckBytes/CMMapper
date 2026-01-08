@@ -24,13 +24,13 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class DatabaseSectionStrings extends AConfigSection {
+public class DatabaseSectionStrings extends ConfigSection {
 
   private String host, port, database, username, password;
 

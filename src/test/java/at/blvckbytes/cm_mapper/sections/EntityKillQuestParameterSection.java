@@ -24,12 +24,12 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class EntityKillQuestParameterSection extends AConfigSection {
+public class EntityKillQuestParameterSection extends ConfigSection {
 
   private String entityType;
   private String entityName;

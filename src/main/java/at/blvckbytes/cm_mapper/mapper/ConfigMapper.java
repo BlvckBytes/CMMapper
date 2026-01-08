@@ -49,7 +49,7 @@ public class ConfigMapper implements IConfigMapper {
   }
 
   @Override
-  public <T extends AConfigSection> T mapSection(@Nullable String root, Class<T> type) throws Exception {
+  public <T extends ConfigSection> T mapSection(@Nullable String root, Class<T> type) throws Exception {
     return mapSectionSub(root, null, type);
   }
 
@@ -65,7 +65,7 @@ public class ConfigMapper implements IConfigMapper {
    * @param type Class of the config section to instantiate
    * @return Instantiated class with mapped fields
    */
-  private <T extends AConfigSection> T mapSectionSub(@Nullable String root, @Nullable Map<?, ?> source, Class<T> type) throws Exception {
+  private <T extends ConfigSection> T mapSectionSub(@Nullable String root, @Nullable Map<?, ?> source, Class<T> type) throws Exception {
       T instance = findStandardConstructor(type).newInstance();
 
       Tuple<List<Field>, Iterator<Field>> fields = findApplicableFields(type);
@@ -198,7 +198,7 @@ public class ConfigMapper implements IConfigMapper {
 
   /**
    * Tries to convert the input object to the specified type, by either stringifying,
-   * by converting to an enum-constant or by parsing a {@link AConfigSection} if the
+   * by converting to an enum-constant or by parsing a {@link ConfigSection} if the
    * input is of type map and returning null otherwise. Unsupported types throw.
    * @param input Input object to convert
    * @param type Type to convert to
@@ -232,11 +232,11 @@ public class ConfigMapper implements IConfigMapper {
       throw new MappingError("Value \"" + input + "\" was not one of " + existingConstants);
     }
 
-    if (AConfigSection.class.isAssignableFrom(type)) {
+    if (ConfigSection.class.isAssignableFrom(type)) {
       if (!(input instanceof Map))
         input = new HashMap<>();
 
-      Object value = mapSectionSub(null, (Map<?, ?>) input, type.asSubclass(AConfigSection.class));
+      Object value = mapSectionSub(null, (Map<?, ?>) input, type.asSubclass(ConfigSection.class));
 
       return convertType(value, type);
     }
@@ -360,8 +360,8 @@ public class ConfigMapper implements IConfigMapper {
     if (!always && value == null)
       return null;
 
-    if (AConfigSection.class.isAssignableFrom(type))
-      return mapSectionSub(path, source, type.asSubclass(AConfigSection.class));
+    if (ConfigSection.class.isAssignableFrom(type))
+      return mapSectionSub(path, source, type.asSubclass(ConfigSection.class));
 
     // Requested plain object
     if (type == Object.class)

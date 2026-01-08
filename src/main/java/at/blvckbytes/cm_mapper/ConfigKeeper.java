@@ -1,13 +1,13 @@
 package at.blvckbytes.cm_mapper;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ConfigKeeper<T extends AConfigSection> {
+public class ConfigKeeper<T extends ConfigSection> {
 
   private final ConfigHandler configHandler;
   private final String fileName;

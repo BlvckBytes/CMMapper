@@ -24,12 +24,12 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class DatabaseSectionEvaluables extends AConfigSection {
+public class DatabaseSectionEvaluables extends ConfigSection {
 
   private String host, port, database, username, password;
 

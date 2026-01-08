@@ -24,7 +24,7 @@
 
 package at.blvckbytes.cm_mapper.mapper;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import org.jetbrains.annotations.Nullable;
 
 public interface IConfigMapper {
@@ -32,12 +32,12 @@ public interface IConfigMapper {
   /**
    * Creates an empty instance of the provided type by invoking the default-constructor
    * and then traverses its fields to assign them one after the other with available
-   * configuration values while making use of the decision methods within {@link AConfigSection}
+   * configuration values while making use of the decision methods within {@link ConfigSection}
    * @param root Root node of this section (null means config root)
    * @param type Type of the class to map
    * @return Mapped instance of specified type
    */
-  <T extends AConfigSection> T mapSection(@Nullable String root, Class<T> type) throws Exception;
+  <T extends ConfigSection> T mapSection(@Nullable String root, Class<T> type) throws Exception;
 
   /**
    * Get the underlying configuration instance

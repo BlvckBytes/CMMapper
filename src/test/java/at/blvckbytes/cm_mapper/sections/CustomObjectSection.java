@@ -1,8 +1,8 @@
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 
-public class CustomObjectSection extends AConfigSection {
+public class CustomObjectSection extends ConfigSection {
 
   public CustomObject customObject;
 

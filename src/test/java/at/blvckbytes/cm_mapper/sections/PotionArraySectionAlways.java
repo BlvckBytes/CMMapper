@@ -24,13 +24,13 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.cm_mapper.mapper.section.CSAlways;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class PotionArraySectionAlways extends AConfigSection {
+public class PotionArraySectionAlways extends ConfigSection {
 
   private String type;
 

@@ -24,12 +24,12 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class NoStandardConstructorSection extends AConfigSection {
+public class NoStandardConstructorSection extends ConfigSection {
 
   private String a, b, c;
 

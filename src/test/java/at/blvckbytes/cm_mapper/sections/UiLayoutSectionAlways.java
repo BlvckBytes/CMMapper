@@ -24,14 +24,14 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.cm_mapper.mapper.section.CSAlways;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-public class UiLayoutSectionAlways extends AConfigSection {
+public class UiLayoutSectionAlways extends ConfigSection {
 
   private String uiName;
 

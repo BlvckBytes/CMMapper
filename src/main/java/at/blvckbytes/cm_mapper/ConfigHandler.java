@@ -24,17 +24,27 @@
 
 package at.blvckbytes.cm_mapper;
 
+import at.blvckbytes.cm_mapper.cm.ComponentExpression;
+import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
 import at.blvckbytes.cm_mapper.mapper.ConfigMapper;
 import at.blvckbytes.cm_mapper.mapper.YamlConfig;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.markup.ast.tag.built_in.BuiltInTagRegistry;
+import at.blvckbytes.component_markup.markup.parser.MarkupParseException;
+import at.blvckbytes.component_markup.markup.parser.MarkupParser;
+import at.blvckbytes.component_markup.util.ErrorScreen;
+import at.blvckbytes.component_markup.util.InputView;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import com.google.common.base.Charsets;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ConfigHandler {
+public class ConfigHandler implements InterpreterLogger {
 
   private final Map<String, ConfigMapper> mapperByFileName;
 
@@ -137,13 +147,56 @@ public class ConfigHandler {
         }
       }
 
-      ConfigMapper mapper = new ConfigMapper(config, this::configValueConverter);
+      var baseEnvironment = new InterpretationEnvironment();
+
+      var globalLookupTable = new HashMap<String, Object>();
+      baseEnvironment.withVariable("lut", globalLookupTable);
+
+      if (config.get("cLut") instanceof Map<?,?> map) {
+        for (var entry : map.entrySet()) {
+          var key = String.valueOf(entry.getKey());
+          var view = InputView.of(String.valueOf(entry.getValue()));
+
+          try {
+            globalLookupTable.put(key, MarkupParser.parse(view, BuiltInTagRegistry.INSTANCE));
+          } catch (MarkupParseException e) {
+            log(view, e.position, e.getErrorMessage(), null);
+          }
+        }
+      }
+
+      if (config.get("sLut") instanceof Map<?,?> map) {
+        for (var entry : map.entrySet()) {
+          var key = String.valueOf(entry.getKey());
+
+          if (globalLookupTable.keySet().stream().anyMatch(key::equalsIgnoreCase))
+            logger.warning("Duplicate s-lut-entry \"" + key + "\" in " + fileName);
+
+          globalLookupTable.put(key, entry.getValue());
+        }
+      }
+
+      ConfigMapper mapper = new ConfigMapper(config, (input, type) -> {
+        if (type == ComponentMarkup.class)
+          return new ComponentMarkup(String.valueOf(input), baseEnvironment, this);
+
+        if (type == ComponentExpression.class)
+          return new ComponentExpression(String.valueOf(input), baseEnvironment, this);
+
+        return input;
+      });
+
       mapperByFileName.put(fileName.toLowerCase(), mapper);
       return mapper;
     }
   }
 
-  private Object configValueConverter(Object input, Class<?> fieldType) {
-    return input;
+  @Override
+  public void log(InputView view, int position, String message, @Nullable Throwable e) {
+    for (var line : ErrorScreen.make(view, position, message))
+      logger.log(Level.WARNING, line);
+
+    if (e != null)
+      logger.log(Level.WARNING, "The following error occurred:", e);
   }
 }

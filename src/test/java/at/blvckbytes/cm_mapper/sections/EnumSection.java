@@ -24,9 +24,9 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 
-public class EnumSection extends AConfigSection {
+public class EnumSection extends ConfigSection {
 
   private ECustomEnum customEnumA;
   private ECustomEnum customEnumB;

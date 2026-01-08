@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public abstract class AConfigSection {
+public abstract class ConfigSection {
 
   private static class DefaultSupplier {
     private final Supplier<Object> supplier;
@@ -45,7 +45,7 @@ public abstract class AConfigSection {
 
   private final Map<Class<?>, DefaultSupplier> fieldDefaultSuppliers;
 
-  public AConfigSection() {
+  public ConfigSection() {
     this.fieldDefaultSuppliers = new HashMap<>();
   }
 

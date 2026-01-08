@@ -24,12 +24,12 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class PotionSimpleSection extends AConfigSection {
+public class PotionSimpleSection extends ConfigSection {
 
   private String type;
   private PotionEffectSection mainEffect;
