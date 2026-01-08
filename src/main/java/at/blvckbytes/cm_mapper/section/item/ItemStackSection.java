@@ -5,6 +5,7 @@ import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.component_markup.constructor.SlotType;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import com.cryptomorin.xseries.XMaterial;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import org.bukkit.Bukkit;
@@ -23,8 +24,8 @@ public class ItemStackSection extends ConfigSection {
   private @Nullable ComponentExpression amount;
   private @Nullable ComponentMarkup textures;
 
-  public ItemStackSection(InterpretationEnvironment baseEnvironment) {
-    super(baseEnvironment);
+  public ItemStackSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
   }
 
   public void patch(ItemStack item, InterpretationEnvironment environment) {

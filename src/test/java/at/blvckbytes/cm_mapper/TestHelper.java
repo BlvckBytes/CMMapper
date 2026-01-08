@@ -29,6 +29,7 @@ import at.blvckbytes.cm_mapper.mapper.IConfigMapper;
 import at.blvckbytes.cm_mapper.mapper.ValueConverter;
 import at.blvckbytes.cm_mapper.mapper.YamlConfig;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.function.Executable;
 
@@ -42,6 +43,9 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestHelper {
+
+  private final InterpretationEnvironment emptyEnvironment = new InterpretationEnvironment();
+  private final InterpreterLogger nullLogger = (view, position, message, e) -> {};
 
   /**
    * Create a new config instance and load its contents from a yaml file
@@ -76,7 +80,7 @@ public class TestHelper {
    */
   public IConfigMapper makeMapper(String fileName, ValueConverter valueConverter) throws FileNotFoundException {
     YamlConfig config = makeConfig(fileName);
-    return new ConfigMapper(config, new InterpretationEnvironment(), valueConverter);
+    return new ConfigMapper(config, emptyEnvironment, nullLogger, valueConverter);
   }
 
   /**

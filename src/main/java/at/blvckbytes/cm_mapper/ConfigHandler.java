@@ -44,7 +44,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ConfigHandler implements InterpreterLogger {
+public class ConfigHandler {
 
   private final Map<String, ConfigMapper> mapperByFileName;
 
@@ -147,6 +147,17 @@ public class ConfigHandler implements InterpreterLogger {
         }
       }
 
+      var interpreterLogger = new InterpreterLogger() {
+        @Override
+        public void log(InputView view, int position, String message, @Nullable Throwable e) {
+          for (var line : ErrorScreen.make(view, position, message))
+            logger.log(Level.WARNING, "[" + fileName + "] " + line);
+
+          if (e != null)
+            logger.log(Level.WARNING, "[" + fileName + "] " + "The following error occurred:", e);
+        }
+      };
+
       var baseEnvironment = new InterpretationEnvironment();
 
       var globalLookupTable = new HashMap<String, Object>();
@@ -160,7 +171,7 @@ public class ConfigHandler implements InterpreterLogger {
           try {
             globalLookupTable.put(key, MarkupParser.parse(view, BuiltInTagRegistry.INSTANCE));
           } catch (MarkupParseException e) {
-            log(view, e.position, e.getErrorMessage(), null);
+            interpreterLogger.log(view, e.position, e.getErrorMessage(), null);
           }
         }
       }
@@ -176,12 +187,12 @@ public class ConfigHandler implements InterpreterLogger {
         }
       }
 
-      ConfigMapper mapper = new ConfigMapper(config, baseEnvironment, (input, type) -> {
+      ConfigMapper mapper = new ConfigMapper(config, baseEnvironment, interpreterLogger, (input, type) -> {
         if (type == ComponentMarkup.class)
-          return new ComponentMarkup(String.valueOf(input), baseEnvironment, this);
+          return new ComponentMarkup(String.valueOf(input), baseEnvironment, interpreterLogger);
 
         if (type == ComponentExpression.class)
-          return new ComponentExpression(String.valueOf(input), baseEnvironment, this);
+          return new ComponentExpression(String.valueOf(input), baseEnvironment, interpreterLogger);
 
         return input;
       });
@@ -189,14 +200,5 @@ public class ConfigHandler implements InterpreterLogger {
       mapperByFileName.put(fileName.toLowerCase(), mapper);
       return mapper;
     }
-  }
-
-  @Override
-  public void log(InputView view, int position, String message, @Nullable Throwable e) {
-    for (var line : ErrorScreen.make(view, position, message))
-      logger.log(Level.WARNING, line);
-
-    if (e != null)
-      logger.log(Level.WARNING, "The following error occurred:", e);
   }
 }

@@ -26,6 +26,7 @@ package at.blvckbytes.cm_mapper.sections;
 
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -35,8 +36,8 @@ public class BlockBreakQuestParameterSection extends ConfigSection {
   private String material;
   private String world;
 
-  public BlockBreakQuestParameterSection(InterpretationEnvironment baseEnvironment) {
-    super(baseEnvironment);
+  public BlockBreakQuestParameterSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
   }
 
   @Override

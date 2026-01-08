@@ -9,6 +9,7 @@ import at.blvckbytes.cm_mapper.mapper.section.CSDecide;
 import at.blvckbytes.cm_mapper.mapper.section.CSIgnore;
 import at.blvckbytes.component_markup.constructor.SlotType;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
@@ -36,8 +37,8 @@ public class GuiSection<T extends ConfigSection> extends ConfigSection {
   @CSIgnore
   public InterpretationEnvironment inventoryEnvironment;
 
-  public GuiSection(Class<T> itemsSectionClass, InterpretationEnvironment baseEnvironment) {
-    super(baseEnvironment);
+  public GuiSection(Class<T> itemsSectionClass, InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
 
     this.itemsSectionClass = itemsSectionClass;
   }

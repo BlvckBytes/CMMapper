@@ -26,6 +26,7 @@ package at.blvckbytes.cm_mapper.sections;
 
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -35,8 +36,8 @@ public class PotionListSection extends ConfigSection {
   private String type;
   private List<PotionEffectSection> effects;
 
-  public PotionListSection(InterpretationEnvironment baseEnvironment) {
-    super(baseEnvironment);
+  public PotionListSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
   }
 
   @Override

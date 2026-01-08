@@ -5,6 +5,7 @@ import at.blvckbytes.cm_mapper.mapper.MappingError;
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.cm_mapper.mapper.section.CSIgnore;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -18,8 +19,8 @@ public abstract class PaginatedGuiSection<T extends ConfigSection> extends GuiSe
   @CSIgnore
   private Set<Integer> _paginationSlots;
 
-  public PaginatedGuiSection(Class<T> itemsSectionClass, InterpretationEnvironment baseEnvironment) {
-    super(itemsSectionClass, baseEnvironment);
+  public PaginatedGuiSection(Class<T> itemsSectionClass, InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(itemsSectionClass, baseEnvironment, interpreterLogger);
   }
 
   @Override

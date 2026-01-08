@@ -21,8 +21,8 @@ public class ComponentExpression {
   private final InterpretationEnvironment baseEnvironment;
   private final InterpreterLogger logger;
 
-  public ComponentExpression(String markup, InterpretationEnvironment baseEnvironment, InterpreterLogger logger) {
-    var view = InputView.of(markup);
+  public ComponentExpression(String expression, InterpretationEnvironment baseEnvironment, InterpreterLogger logger) {
+    var view = InputView.of(expression);
 
     try {
       this.expressionNode = ExpressionParser.parse(view, null);

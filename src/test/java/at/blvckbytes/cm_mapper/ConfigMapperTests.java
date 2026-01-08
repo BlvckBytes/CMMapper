@@ -26,6 +26,8 @@ package at.blvckbytes.cm_mapper;
 
 import at.blvckbytes.cm_mapper.mapper.IConfigMapper;
 import at.blvckbytes.cm_mapper.sections.*;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -294,7 +296,7 @@ public class ConfigMapperTests {
   @Test
   public void shouldThrowWhenNoStandardConstructorAvailable() throws Exception {
     IConfigMapper mapper = helper.makeMapper("mappings.yml");
-    helper.assertThrowsWithMsg(IllegalStateException.class, () -> mapper.mapSection(null, NoStandardConstructorSection.class), "Please specify a standard-constructor taking an EvaluationEnvironmentBuilder on ");
+    helper.assertThrowsWithMsg(IllegalStateException.class, () -> mapper.mapSection(null, NoStandardConstructorSection.class), "Please specify a standard-constructor of scheme (" + InterpretationEnvironment.class + ", " + InterpreterLogger.class + ") on " + NoStandardConstructorSection.class);
   }
 
   @Test

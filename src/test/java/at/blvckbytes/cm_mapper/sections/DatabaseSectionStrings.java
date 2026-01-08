@@ -26,6 +26,7 @@ package at.blvckbytes.cm_mapper.sections;
 
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -35,8 +36,8 @@ public class DatabaseSectionStrings extends ConfigSection {
 
   private String host, port, database, username, password;
 
-  public DatabaseSectionStrings(InterpretationEnvironment baseEnvironment) {
-    super(baseEnvironment);
+  public DatabaseSectionStrings(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
   }
 
   @Override

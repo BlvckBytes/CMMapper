@@ -26,6 +26,7 @@ package at.blvckbytes.cm_mapper.sections;
 
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 
 public class EnumSection extends ConfigSection {
 
@@ -34,8 +35,8 @@ public class EnumSection extends ConfigSection {
   private ECustomEnum customEnumC;
   private ECustomEnum customEnumInvalid;
 
-  public EnumSection(InterpretationEnvironment baseEnvironment) {
-    super(baseEnvironment);
+  public EnumSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
   }
 
   public ECustomEnum getCustomEnumA() {

@@ -26,6 +26,7 @@ package at.blvckbytes.cm_mapper.mapper;
 
 import at.blvckbytes.cm_mapper.mapper.section.*;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
@@ -38,15 +39,18 @@ public class ConfigMapper implements IConfigMapper {
 
   private final IConfig config;
   private final InterpretationEnvironment baseEnvironment;
+  private final InterpreterLogger interpreterLogger;
   private final ValueConverter valueConverter;
 
   public ConfigMapper(
     IConfig config,
     InterpretationEnvironment baseEnvironment,
+    InterpreterLogger interpreterLogger,
     ValueConverter valueConverter
   ) {
     this.config = config;
     this.baseEnvironment = baseEnvironment;
+    this.interpreterLogger = interpreterLogger;
     this.valueConverter = valueConverter;
   }
 
@@ -73,7 +77,7 @@ public class ConfigMapper implements IConfigMapper {
    * @return Instantiated class with mapped fields
    */
   private <T extends ConfigSection> T mapSectionSub(@Nullable String root, @Nullable Map<?, ?> source, Class<T> type) throws Exception {
-      T instance = findStandardConstructor(type).newInstance(baseEnvironment);
+      T instance = findStandardConstructor(type).newInstance(baseEnvironment, interpreterLogger);
 
       Tuple<List<Field>, Iterator<Field>> fields = findApplicableFields(type);
 
@@ -422,14 +426,14 @@ public class ConfigMapper implements IConfigMapper {
    */
   private<T> Constructor<T> findStandardConstructor(Class<T> type) {
     try {
-      Constructor<T> constructor = type.getDeclaredConstructor(InterpretationEnvironment.class);
+      Constructor<T> constructor = type.getDeclaredConstructor(InterpretationEnvironment.class, InterpreterLogger.class);
 
       if (!Modifier.isPublic(constructor.getModifiers()))
         throw new IllegalStateException("The standard-constructor of a config-section has to be public");
 
       return constructor;
     } catch (NoSuchMethodException e) {
-      throw new IllegalStateException("Please specify a standard-constructor taking an EvaluationEnvironmentBuilder on " + type);
+      throw new IllegalStateException("Please specify a standard-constructor of scheme (" + InterpretationEnvironment.class + ", " + InterpreterLogger.class + ") on " + type);
     }
   }
 

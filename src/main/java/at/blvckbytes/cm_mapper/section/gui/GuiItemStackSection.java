@@ -4,6 +4,7 @@ import at.blvckbytes.cm_mapper.cm.ComponentExpression;
 import at.blvckbytes.cm_mapper.mapper.section.CSIgnore;
 import at.blvckbytes.cm_mapper.section.item.ItemStackSection;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
+import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,8 +19,8 @@ public class GuiItemStackSection extends ItemStackSection {
   @CSIgnore
   private @Nullable Set<Integer> displaySlots;
 
-  public GuiItemStackSection(InterpretationEnvironment baseEnvironment) {
-    super(baseEnvironment);
+  public GuiItemStackSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
+    super(baseEnvironment, interpreterLogger);
   }
 
   @Override
