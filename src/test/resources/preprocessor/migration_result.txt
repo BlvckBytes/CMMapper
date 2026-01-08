@@ -1,0 +1,25 @@
+KEY-VERY-TOP-1 Value very top 1
+KEY-VERY-TOP-2 Value very top 2
+
+# This is key a
+# - var_a: TypeA
+# - var_b: TypeB
+# - var_c: TypeC
+# - var_d: TypeD
+KEY-A Value A
+KEY-NEAR-TO-A Value near to a
+
+# This is key b
+# - var_b: TypeB
+# - var_a: TypeUpdated
+KEY-B Value B
+KEY-NEAR-TO-B-1 Value near to b 1
+KEY-NEAR-TO-B-2 Value near to b 2
+KEY-Y Value Y
+KEY-DISCONTINUED This one will be left untouched
+
+# This is key c
+# - var_y: TypeY
+KEY-C Value C
+
+KEY-AT-BOTTOM Value at bottom

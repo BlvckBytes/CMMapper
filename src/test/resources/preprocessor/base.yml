@@ -1,0 +1,9 @@
+simpleKey: '@{KEY-A}'
+multilineValue$: |
+  hello world @{KEY-B}
+multilineList:
+- |
+  hello world
+    test
+  @{KEY-C(y=key(a); z=value(a))}
+   another line
