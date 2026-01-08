@@ -478,7 +478,7 @@ public class YamlConfig implements IConfig {
 
   @Override
   public boolean exists(@Nullable String path) {
-    // For a key to exist, it's path has to exist within the
+    // For a key to exist, its path has to exist within the
     // config, even if it points at a null value
     return locateNode(path, true, false).node != null;
   }
@@ -654,7 +654,7 @@ public class YamlConfig implements IConfig {
   }
 
   /**
-   * Locates a target node by it's identifying path
+   * Locates a target node by its identifying path
    * @param path Path to search for, null means root
    * @param self Whether to locate the containing key or the value (self means the key)
    * @return A tuple of the target node or null if the target node didn't exist

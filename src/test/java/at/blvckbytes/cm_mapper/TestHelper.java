@@ -107,7 +107,7 @@ public class TestHelper {
    * calling attach as well as their presence afterward.
    * @param path Path to attach at
    * @param lines Lines of comments to attach
-   * @param self Whether to attach to the key itself or it's value
+   * @param self Whether to attach to the key itself or its value
    * @param config Configuration instance to attach on
    */
   public void assertAttachCommentInMemory(String path, List<String> lines, boolean self, YamlConfig config) {

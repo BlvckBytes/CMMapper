@@ -31,19 +31,19 @@ import java.util.List;
 public interface IConfig {
 
   /**
-   * Get a value by it's path
+   * Get a value by its path
    * @param path Path to identify the value
    */
   @Nullable Object get(@Nullable String path);
 
   /**
-   * Set a value by it's path
+   * Set a value by its path
    * @param path Path to identify the value
    */
   void set(@Nullable String path, @Nullable Object value);
 
   /**
-   * Remove a key and all of it's children by it's path
+   * Remove a key and all of its children by its path
    * @param path Path to identify the key
    */
   void remove(@Nullable String path);
@@ -58,14 +58,14 @@ public interface IConfig {
    * Attach a comment to a specific path
    * @param path Path to attach to
    * @param lines Lines of text in the comment
-   * @param self Whether to attach to the key itself or to it's value
+   * @param self Whether to attach to the key itself or to its value
    */
   void attachComment(@Nullable String path, List<String> lines, boolean self);
 
   /**
    * Read a specific path's attached comment, if available
    * @param path Path to read from
-   * @param self Whether to read from the key itself or from it's value
+   * @param self Whether to read from the key itself or from its value
    * @return A list of the comment's lines, null if the path doesn't exist
    *         or there's no comment attached to it yet
    */

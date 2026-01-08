@@ -13,7 +13,7 @@ a:
   b: first
   c: second
   d: 3
-  # But this key is new, with all of it's children
+  # But this key is new, with all of its children
   e:
     f: 25
     h:

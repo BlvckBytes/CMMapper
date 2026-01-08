@@ -53,7 +53,7 @@ public class ConfigMapper implements IConfigMapper {
 
   /**
    * Recursive, parameterized subroutine for creating an empty config section and then assigning values
-   * to it's mapped fields automatically, based on their names and types by making use of
+   * to its mapped fields automatically, based on their names and types by making use of
    * {@link #resolveFieldValue}. Fields of type object will be decided at
    * runtime, null values may get a default value assigned and incompatible values are tried to be
    * converted before invoking the field setter. If a value still is null after all calls, the field
@@ -339,7 +339,7 @@ public class ConfigMapper implements IConfigMapper {
   }
 
   /**
-   * Tries to resolve a field's value based on its type, it's annotations, it's name and
+   * Tries to resolve a field's value based on its type, its annotations, its name and
    * the source (either a path or a source map).
    * @param root Root node of this section (null means config root)
    * @param source Map to resolve from instead of querying the config, optional
