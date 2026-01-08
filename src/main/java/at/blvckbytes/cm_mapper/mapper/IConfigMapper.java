@@ -22,13 +22,26 @@
  * SOFTWARE.
  */
 
-package at.blvckbytes.cm_mapper.sections;
+package at.blvckbytes.cm_mapper.mapper;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import org.jetbrains.annotations.Nullable;
 
-@Target({ ElementType.FIELD, ElementType.TYPE })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface CSInlined {}
+public interface IConfigMapper {
+
+  /**
+   * Creates an empty instance of the provided type by invoking the default-constructor
+   * and then traverses its fields to assign them one after the other with available
+   * configuration values while making use of the decision methods within {@link AConfigSection}
+   * @param root Root node of this section (null means config root)
+   * @param type Type of the class to map
+   * @return Mapped instance of specified type
+   */
+  <T extends AConfigSection> T mapSection(@Nullable String root, Class<T> type) throws Exception;
+
+  /**
+   * Get the underlying configuration instance
+   */
+  IConfig getConfig();
+
+}

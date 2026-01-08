@@ -24,6 +24,7 @@
 
 package at.blvckbytes.cm_mapper;
 
+import at.blvckbytes.cm_mapper.mapper.YamlConfig;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

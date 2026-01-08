@@ -24,6 +24,9 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
+import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+import at.blvckbytes.cm_mapper.mapper.section.CSInlined;
+
 public class QuestSection extends AConfigSection {
 
   private String type;

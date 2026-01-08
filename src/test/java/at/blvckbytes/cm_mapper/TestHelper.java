@@ -24,6 +24,10 @@
 
 package at.blvckbytes.cm_mapper;
 
+import at.blvckbytes.cm_mapper.mapper.ConfigMapper;
+import at.blvckbytes.cm_mapper.mapper.IConfigMapper;
+import at.blvckbytes.cm_mapper.mapper.ValueConverter;
+import at.blvckbytes.cm_mapper.mapper.YamlConfig;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.function.Executable;
 

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package at.blvckbytes.cm_mapper.sections;
+package at.blvckbytes.cm_mapper.mapper.section;
 
 import org.jetbrains.annotations.Nullable;
 

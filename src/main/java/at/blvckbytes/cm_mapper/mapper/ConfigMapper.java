@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-package at.blvckbytes.cm_mapper;
+package at.blvckbytes.cm_mapper.mapper;
 
-import at.blvckbytes.cm_mapper.sections.*;
+import at.blvckbytes.cm_mapper.mapper.section.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;

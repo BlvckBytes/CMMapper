@@ -24,6 +24,7 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
+import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;

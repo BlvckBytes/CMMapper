@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 BlvckBytes
+ * Copyright (c) 2024 BlvckBytes
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,11 +22,15 @@
  * SOFTWARE.
  */
 
-package at.blvckbytes.cm_mapper;
+package at.blvckbytes.cm_mapper.mapper.section;
 
-public class MappingError extends RuntimeException {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-  public MappingError(String message) {
-    super(message);
-  }
+@Target({ ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CSNamed {
+  String name();
 }

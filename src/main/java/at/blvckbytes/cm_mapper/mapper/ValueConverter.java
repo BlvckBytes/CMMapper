@@ -1,4 +1,4 @@
-package at.blvckbytes.cm_mapper;
+package at.blvckbytes.cm_mapper.mapper;
 
 public interface ValueConverter {
 

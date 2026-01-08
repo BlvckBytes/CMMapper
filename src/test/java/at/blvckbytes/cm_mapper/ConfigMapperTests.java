@@ -24,6 +24,7 @@
 
 package at.blvckbytes.cm_mapper;
 
+import at.blvckbytes.cm_mapper.mapper.IConfigMapper;
 import at.blvckbytes.cm_mapper.sections.*;
 import org.junit.jupiter.api.Test;
 

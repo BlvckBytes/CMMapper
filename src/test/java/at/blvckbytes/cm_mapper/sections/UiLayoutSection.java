@@ -24,6 +24,8 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
+import at.blvckbytes.cm_mapper.mapper.section.AConfigSection;
+
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
