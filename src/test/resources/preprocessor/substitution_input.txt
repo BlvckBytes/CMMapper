@@ -1,3 +1,0 @@
-KEY-A value a
-KEY-B value b
-KEY-C before {x} after {y} and {z}

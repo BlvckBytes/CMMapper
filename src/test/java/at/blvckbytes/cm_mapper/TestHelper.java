@@ -24,10 +24,6 @@
 
 package at.blvckbytes.cm_mapper;
 
-import me.blvckbytes.gpeee.GPEEE;
-import me.blvckbytes.gpeee.IExpressionEvaluator;
-import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
-import me.blvckbytes.gpeee.parser.expression.AExpression;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.function.Executable;
 
@@ -43,30 +39,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestHelper {
 
-  private final IExpressionEvaluator evaluator;
-  private final String expressionMarkerSuffix;
   private final Logger logger;
 
   public TestHelper() {
-    this.expressionMarkerSuffix = "$";
     this.logger = Logger.getGlobal();
-    this.evaluator = new GPEEE(logger);
   }
 
   /**
-   * Get the standard environment to evaluate in
-   */
-  public IEvaluationEnvironment getEnv() {
-    return GPEEE.EMPTY_ENVIRONMENT;
-  }
-
-  /**
-   * Create a new config instance and load it's contents from a yaml file
+   * Create a new config instance and load its contents from a yaml file
    * @param fileName Input file within the resources folder, null to not load at all
    * @return Loaded yaml configuration instance
    */
   public YamlConfig makeConfig(@Nullable String fileName) throws FileNotFoundException {
-    YamlConfig config = new YamlConfig(this.evaluator, this.logger, this.expressionMarkerSuffix);
+    YamlConfig config = new YamlConfig(this.logger);
 
     if (fileName != null)
       config.load(new FileReader("src/test/resources/" + fileName));
@@ -93,17 +78,7 @@ public class TestHelper {
    */
   public IConfigMapper makeMapper(String fileName, IValueConverterRegistry converterRegistry) throws FileNotFoundException {
     YamlConfig config = makeConfig(fileName);
-    return new ConfigMapper(config, this.logger, this.evaluator, converterRegistry);
-  }
-
-  /**
-   * Assert that a config value is an expression and that it evaluates to the expected value
-   * @param expected Expected expression value
-   * @param expression Expression to check
-   */
-  public void assertExpression(Object expected, Object expression) {
-    assertTrue(expression instanceof AExpression);
-    assertEquals(expected, this.evaluator.evaluateExpression((AExpression) expression, getEnv()));
+    return new ConfigMapper(config, this.logger, converterRegistry);
   }
 
   /**
@@ -123,7 +98,7 @@ public class TestHelper {
 
   /**
    * Asserts that a given value was present before removal (if existing is true) and
-   * that it's absent afterwards.
+   * that it's absent afterward.
    * @param path Path to remove
    * @param existing Whether the key actually exists
    * @param config Configuration instance to remove on
@@ -136,7 +111,7 @@ public class TestHelper {
 
   /**
    * Asserts that a given key's comment lines do not match the lines about to append before
-   * calling attach as well as their presence afterwards.
+   * calling attach as well as their presence afterward.
    * @param path Path to attach at
    * @param lines Lines of comments to attach
    * @param self Whether to attach to the key itself or it's value
@@ -150,7 +125,7 @@ public class TestHelper {
 
   /**
    * Asserts that a given key's value does not match the value about to set before
-   * calling set and assures the key's value equality with the set value afterwards.
+   * calling set and assures the key's value equality with the set value afterward.
    * @param path Path to set at
    * @param value Value to set
    * @param config Configuration instance to set on

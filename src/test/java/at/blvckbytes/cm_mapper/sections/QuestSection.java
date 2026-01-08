@@ -24,18 +24,12 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-
 public class QuestSection extends AConfigSection {
 
   private String type;
 
   @CSInlined
   private Object parameter;
-
-  public QuestSection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
-  }
 
   @Override
   public Class<?> runtimeDecide(String field) {

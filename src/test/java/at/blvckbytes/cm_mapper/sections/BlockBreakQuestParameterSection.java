@@ -24,8 +24,6 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -33,10 +31,6 @@ public class BlockBreakQuestParameterSection extends AConfigSection {
 
   private String material;
   private String world;
-
-  public BlockBreakQuestParameterSection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
-  }
 
   @Override
   public Class<?> runtimeDecide(String field) {

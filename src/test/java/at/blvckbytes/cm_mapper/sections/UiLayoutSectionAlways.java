@@ -24,9 +24,6 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.IEvaluable;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -36,11 +33,7 @@ public class UiLayoutSectionAlways extends AConfigSection {
   private String uiName;
 
   @CSAlways
-  private Map<String, IEvaluable> layout;
-
-  public UiLayoutSectionAlways(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
-  }
+  private Map<String, String> layout;
 
   @Override
   public Class<?> runtimeDecide(String field) {
@@ -54,7 +47,7 @@ public class UiLayoutSectionAlways extends AConfigSection {
     return uiName;
   }
 
-  public Map<String, IEvaluable> getLayout() {
+  public Map<String, String> getLayout() {
     return layout;
   }
 }

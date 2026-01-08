@@ -24,19 +24,12 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import at.blvckbytes.cm_mapper.IEvaluable;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-
 import java.lang.reflect.Field;
 import java.util.List;
 
 public class DatabaseSectionEvaluables extends AConfigSection {
 
-  private IEvaluable host, port, database, username, password;
-
-  public DatabaseSectionEvaluables(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
-  }
+  private String host, port, database, username, password;
 
   @Override
   public Class<?> runtimeDecide(String field) {
@@ -46,23 +39,23 @@ public class DatabaseSectionEvaluables extends AConfigSection {
   @Override
   public void afterParsing(List<Field> fields) {}
 
-  public IEvaluable getHost() {
+  public String getHost() {
     return host;
   }
 
-  public IEvaluable getPort() {
+  public String getPort() {
     return port;
   }
 
-  public IEvaluable getDatabase() {
+  public String getDatabase() {
     return database;
   }
 
-  public IEvaluable getUsername() {
+  public String getUsername() {
     return username;
   }
 
-  public IEvaluable getPassword() {
+  public String getPassword() {
     return password;
   }
 }

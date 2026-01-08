@@ -24,8 +24,6 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -40,10 +38,6 @@ public class IgnoreSection extends AConfigSection {
   private String ignored3;
 
   private static String ignored4;
-
-  public IgnoreSection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
-  }
 
   @Override
   public Class<?> runtimeDecide(String field) {

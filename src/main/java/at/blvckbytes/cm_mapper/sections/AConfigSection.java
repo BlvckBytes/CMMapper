@@ -24,8 +24,6 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-import me.blvckbytes.gpeee.interpreter.IEvaluationEnvironment;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -45,18 +43,10 @@ public abstract class AConfigSection {
     }
   }
 
-  private final EvaluationEnvironmentBuilder baseEnvironment;
-  public final IEvaluationEnvironment builtBaseEnvironment;
   private final Map<Class<?>, DefaultSupplier> fieldDefaultSuppliers;
 
-  public AConfigSection(EvaluationEnvironmentBuilder baseEnvironment) {
+  public AConfigSection() {
     this.fieldDefaultSuppliers = new HashMap<>();
-    this.baseEnvironment = baseEnvironment;
-    this.builtBaseEnvironment = baseEnvironment.build();
-  }
-
-  public EvaluationEnvironmentBuilder getBaseEnvironment() {
-    return baseEnvironment.duplicate();
   }
 
   /**

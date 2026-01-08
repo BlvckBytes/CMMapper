@@ -24,18 +24,12 @@
 
 package at.blvckbytes.cm_mapper.sections;
 
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
-
 public class EnumSection extends AConfigSection {
 
   private ECustomEnum customEnumA;
   private ECustomEnum customEnumB;
   private ECustomEnum customEnumC;
   private ECustomEnum customEnumInvalid;
-
-  public EnumSection(EvaluationEnvironmentBuilder baseEnvironment) {
-    super(baseEnvironment);
-  }
 
   public ECustomEnum getCustomEnumA() {
     return customEnumA;

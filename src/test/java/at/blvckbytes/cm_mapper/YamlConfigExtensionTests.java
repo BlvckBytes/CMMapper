@@ -39,7 +39,7 @@ public class YamlConfigExtensionTests {
   @Test
   public void shouldThrowWhenTryingToExtendFromAnUnloadedConfig() throws Exception {
     YamlConfig baseConfig = helper.makeConfig("mappings_base.yml");
-    YamlConfig unloadedConfig = new YamlConfig(null, Logger.getGlobal(), null);
+    YamlConfig unloadedConfig = new YamlConfig(Logger.getGlobal());
     assertThrows(IllegalStateException.class, () -> baseConfig.extendMissingKeys(unloadedConfig), "Other config has not yet been loaded");
   }
 

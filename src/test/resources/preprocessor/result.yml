@@ -1,9 +1,0 @@
-simpleKey$: '"value a"'
-multilineValue$: |
-  hello world "value b"
-multilineList$:
-- |
-  hello world
-    test
-  "before " & x & " after " & (key(a)) & " and " & (value(a))
-   another line

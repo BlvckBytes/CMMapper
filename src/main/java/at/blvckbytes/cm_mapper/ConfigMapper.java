@@ -26,10 +26,6 @@ package at.blvckbytes.cm_mapper;
 
 import at.blvckbytes.cm_mapper.logging.DebugLogSource;
 import at.blvckbytes.cm_mapper.sections.*;
-import me.blvckbytes.gpeee.GPEEE;
-import me.blvckbytes.gpeee.IExpressionEvaluator;
-import me.blvckbytes.gpeee.Tuple;
-import me.blvckbytes.gpeee.interpreter.EvaluationEnvironmentBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
@@ -43,25 +39,21 @@ public class ConfigMapper implements IConfigMapper {
   private final IConfig config;
 
   private final Logger logger;
-  private final IExpressionEvaluator evaluator;
   private final @Nullable IValueConverterRegistry converterRegistry;
 
   /**
    * Create a new config reader on a {@link IConfig}
    * @param config Configuration to read from
    * @param logger Logger to use for logging events
-   * @param evaluator Expression evaluator instance to use when parsing expressions
    * @param converterRegistry Optional registry of custom value converters
    */
   public ConfigMapper(
     IConfig config,
     Logger logger,
-    IExpressionEvaluator evaluator,
     @Nullable IValueConverterRegistry converterRegistry
   ) {
     this.config = config;
     this.logger = logger;
-    this.evaluator = evaluator;
     this.converterRegistry = converterRegistry;
   }
 
@@ -90,12 +82,12 @@ public class ConfigMapper implements IConfigMapper {
    */
   private <T extends AConfigSection> T mapSectionSub(@Nullable String root, @Nullable Map<?, ?> source, Class<T> type) throws Exception {
       logger.log(Level.FINEST, () -> DebugLogSource.MAPPER + "At the subroutine of mapping path=" + root + " to type=" + type + " using source=" + source);
-      T instance = findStandardConstructor(type).newInstance(evaluator.getBaseEnvironment());
+      T instance = findStandardConstructor(type).newInstance();
 
       Tuple<List<Field>, Iterator<Field>> fields = findApplicableFields(type);
 
-      while (fields.b.hasNext()) {
-        Field f = fields.b.next();
+      while (fields.b().hasNext()) {
+        Field f = fields.b().next();
         CSNamed nameAnnotation = f.getAnnotation(CSNamed.class);
         String fName = nameAnnotation == null ? f.getName() : nameAnnotation.name();
 
@@ -136,7 +128,7 @@ public class ConfigMapper implements IConfigMapper {
             value = instance.defaultFor(f);
 
           if (value != null && converter != null)
-            value = converter.apply(value, evaluator);
+            value = converter.apply(value);
 
           // Only set if the value isn't null, as the default constructor
           // might have already assigned some default value earlier
@@ -152,7 +144,7 @@ public class ConfigMapper implements IConfigMapper {
       }
 
       // This instance won't have any more changes applied to it, call with the list of affected fields
-      instance.afterParsing(fields.a);
+      instance.afterParsing(fields.a());
 
       return instance;
   }
@@ -215,7 +207,7 @@ public class ConfigMapper implements IConfigMapper {
 
     int dotIndex = path.indexOf('.');
 
-    while (path.length() > 0) {
+    while (!path.isEmpty()) {
       String key = dotIndex < 0 ? path : path.substring(0, dotIndex);
 
       if (StringUtils.isBlank(key))
@@ -227,7 +219,7 @@ public class ConfigMapper implements IConfigMapper {
       Object value = source.get(key);
 
       // Last iteration, respond with the current value
-      if (path.length() == 0) {
+      if (path.isEmpty()) {
         logger.log(Level.FINEST, () -> DebugLogSource.MAPPER + "Walk ended, returning value=" + value);
         return value;
       }
@@ -278,7 +270,7 @@ public class ConfigMapper implements IConfigMapper {
     // Requested plain object
     if (type == Object.class) {
       if (converter != null)
-        input = converter.apply(input, evaluator);
+        input = converter.apply(input);
 
       return input;
     }
@@ -310,37 +302,15 @@ public class ConfigMapper implements IConfigMapper {
       Object value = mapSectionSub(null, (Map<?, ?>) input, type.asSubclass(AConfigSection.class));
 
       if (converter != null)
-        value = converter.apply(value, evaluator);
+        value = converter.apply(value);
 
       return value;
     }
 
     logger.log(Level.FINEST, () -> DebugLogSource.MAPPER + "Wrapping value in evaluable");
 
-    IEvaluable evaluable = new ConfigValue(input, this.evaluator);
-
-    if (IEvaluable.class.isAssignableFrom(type)) {
-      logger.log(Level.FINEST, () -> DebugLogSource.MAPPER + "Returning evaluable");
-      return evaluable;
-    }
-
     if (type == String.class)
-      return evaluable.asScalar(ScalarType.STRING, GPEEE.EMPTY_ENVIRONMENT);
-
-    if (type == int.class || type == Integer.class)
-      return evaluable.asScalar(ScalarType.LONG, GPEEE.EMPTY_ENVIRONMENT).intValue();
-
-    if (type == long.class || type == Long.class)
-      return evaluable.asScalar(ScalarType.LONG, GPEEE.EMPTY_ENVIRONMENT);
-
-    if (type == double.class || type == Double.class)
-      return evaluable.asScalar(ScalarType.DOUBLE, GPEEE.EMPTY_ENVIRONMENT);
-
-    if (type == float.class || type == Float.class)
-      return evaluable.asScalar(ScalarType.DOUBLE, GPEEE.EMPTY_ENVIRONMENT).floatValue();
-
-    if (type == boolean.class || type == Boolean.class)
-      return evaluable.asScalar(ScalarType.BOOLEAN, GPEEE.EMPTY_ENVIRONMENT);
+      return String.valueOf(input);
 
     throw new MappingError("Unsupported type specified: " + type);
   }
@@ -401,12 +371,11 @@ public class ConfigMapper implements IConfigMapper {
 
     List<Object> result = new ArrayList<>();
 
-    if (!(value instanceof List)) {
+    if (!(value instanceof List<?> list)) {
       logger.log(Level.FINEST, () -> DebugLogSource.MAPPER + "Not a list, returning empty list");
       return result;
     }
 
-    List<?> list = (List<?>) value;
     for (int i = 0; i < list.size(); i++) {
       Object itemValue;
       try {
@@ -432,12 +401,11 @@ public class ConfigMapper implements IConfigMapper {
 
     Class<?> arrayType = f.getType().getComponentType();
 
-    if (!(value instanceof List)) {
+    if (!(value instanceof List<?> list)) {
       logger.log(Level.FINEST, () -> DebugLogSource.MAPPER + "Not a list, returning empty array");
       return Array.newInstance(arrayType, 0);
     }
 
-    List<?> list = (List<?>) value;
     Object array = Array.newInstance(arrayType, list.size());
 
     for (int i = 0; i < list.size(); i++) {
@@ -539,7 +507,7 @@ public class ConfigMapper implements IConfigMapper {
    */
   private<T> Constructor<T> findStandardConstructor(Class<T> type) {
     try {
-      Constructor<T> constructor = type.getDeclaredConstructor(EvaluationEnvironmentBuilder.class);
+      Constructor<T> constructor = type.getDeclaredConstructor();
 
       if (!Modifier.isPublic(constructor.getModifiers()))
         throw new IllegalStateException("The standard-constructor of a config-section has to be public");

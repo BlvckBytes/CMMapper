@@ -25,8 +25,6 @@
 package at.blvckbytes.cm_mapper;
 
 import at.blvckbytes.cm_mapper.logging.DebugLogSource;
-import me.blvckbytes.gpeee.IExpressionEvaluator;
-import me.blvckbytes.gpeee.Tuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
@@ -47,21 +45,7 @@ import java.util.logging.Logger;
 
 public class YamlConfig implements IConfig {
 
-  private static class LocateNodeResult {
-    private final @Nullable Node node;
-    private final boolean markedForExpressions;
-    private final Stack<MappingNode> containerStack;
-
-    private LocateNodeResult(
-      @Nullable Node node,
-      boolean markedForExpressions,
-      Stack<MappingNode> containerStack
-    ) {
-      this.node = node;
-      this.markedForExpressions = markedForExpressions;
-      this.containerStack = containerStack;
-    }
-
+  private record LocateNodeResult(@Nullable Node node, Stack<MappingNode> containerStack) {
     @Nullable MappingNode getLastContainer() {
       if (containerStack.isEmpty())
         return null;
@@ -70,16 +54,10 @@ public class YamlConfig implements IConfig {
     }
   }
 
-  /*
-    TODO: Add more debug logging calls to capture all details
-   */
-
   private static final Yaml YAML;
   private static final DumperOptions DUMPER_OPTIONS;
 
-  private final @Nullable IExpressionEvaluator evaluator;
   private final Logger logger;
-  private final @Nullable String expressionMarkerSuffix;
   private final Map<MappingNode, Map<String, @Nullable NodeTuple>> locateKeyCache;
   private final List<MergedNodeTuple> mergedTuples;
 
@@ -100,16 +78,10 @@ public class YamlConfig implements IConfig {
     YAML = new Yaml(new Constructor(loaderOptions), new Representer(DUMPER_OPTIONS), DUMPER_OPTIONS, loaderOptions);
   }
 
-  public YamlConfig(@Nullable IExpressionEvaluator evaluator, Logger logger, @Nullable String expressionMarkerSuffix) {
-    this.evaluator = evaluator;
+  public YamlConfig(Logger logger) {
     this.logger = logger;
-    this.expressionMarkerSuffix = expressionMarkerSuffix;
     this.locateKeyCache = new HashMap<>();
     this.mergedTuples = new ArrayList<>();
-  }
-
-  public @Nullable String getExpressionMarkerSuffix() {
-    return this.expressionMarkerSuffix;
   }
 
   public MappingNode getRootNode() {
@@ -231,7 +203,7 @@ public class YamlConfig implements IConfig {
   private void extractHeader() {
     List<NodeTuple> rootTuples = this.rootNode.getValue();
 
-    if (rootTuples.size() == 0) {
+    if (rootTuples.isEmpty()) {
       this.header = "";
       return;
     }
@@ -250,7 +222,7 @@ public class YamlConfig implements IConfig {
     boolean foundBlankLine = false;
     boolean foundBlockLine = false;
 
-    while (firstKeyBlockComments.size() > 0) {
+    while (!firstKeyBlockComments.isEmpty()) {
       CommentLine firstLine = firstKeyBlockComments.remove(0);
       CommentType type = firstLine.getCommentType();
       String value = firstLine.getValue();
@@ -285,7 +257,7 @@ public class YamlConfig implements IConfig {
   public void save(Writer writer) throws IOException {
     logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Serializing the YAML root node to the provided writer");
 
-    if (this.rootNode == null || this.rootNode.getValue().size() == 0) {
+    if (this.rootNode == null || this.rootNode.getValue().isEmpty()) {
       writer.write("");
       return;
     }
@@ -296,15 +268,10 @@ public class YamlConfig implements IConfig {
 
   private void executeWhileMergedTuplesAbsent(Runnable executable) {
     synchronized (this.mergedTuples) {
-      for (Iterator<MergedNodeTuple> mergedTuplesIterator = this.mergedTuples.iterator(); mergedTuplesIterator.hasNext();) {
-        MergedNodeTuple mergedTuple = mergedTuplesIterator.next();
-
-        // If the remove routine yielded false, the element has no longer been in the list
-        // This means that somebody else removed it, and it thus should also not be added back later on
-        // Thus, remove it from the merged tuples list
-        if (!mergedTuple.removeRoutine.get())
-          mergedTuplesIterator.remove();
-      }
+      // If the remove routine yielded false, the element has no longer been in the list
+      // This means that somebody else removed it, and it thus should also not be added back later on
+      // Thus, remove it from the merged tuples list
+      this.mergedTuples.removeIf(mergedTuple -> !mergedTuple.removeRoutine.get());
 
       executable.run();
 
@@ -414,7 +381,7 @@ public class YamlConfig implements IConfig {
       if (parentNode != null && isKeyCommentedOut(key, parentNode))
         return false;
 
-      MappingNode container = locateContainerNode(pathOfTuple, true).a;
+      MappingNode container = locateContainerNode(pathOfTuple, true).a();
       List<NodeTuple> containerTuples = container.getValue();
 
       // The new key is at an index which doesn't yet exist, add to the end of the tuple list
@@ -470,7 +437,7 @@ public class YamlConfig implements IConfig {
     logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Object at path=" + path + " has been requested");
 
     LocateNodeResult target = locateNode(path, false, false);
-    Object value = target.node == null ? null : unwrapNode(target.node, target.markedForExpressions);
+    Object value = target.node == null ? null : unwrapNode(target.node);
 
     logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Returning content of path=" + path + " with value=" + value);
 
@@ -609,8 +576,8 @@ public class YamlConfig implements IConfig {
    */
   private void updatePathValue(String keyPath, @Nullable Node value, boolean forceCreateMappings) {
     Tuple<MappingNode, String> containerAndKeyPart = locateContainerNode(keyPath, forceCreateMappings);
-    MappingNode container = containerAndKeyPart.a;
-    String keyPart = containerAndKeyPart.b;
+    MappingNode container = containerAndKeyPart.a();
+    String keyPart = containerAndKeyPart.b();
 
     // Check if there's an existing tuple
     NodeTuple existingTuple = locateKey(container, keyPart);
@@ -639,7 +606,7 @@ public class YamlConfig implements IConfig {
     if (value != null) {
       NodeTuple newTuple = createNewTuple(existingKey, keyPart, value);
 
-      // Preserve it's index within the list of tuples
+      // Preserve its index within the list of tuples
       if (existingIndex >= 0)
         container.getValue().add(existingIndex, newTuple);
       else
@@ -656,21 +623,8 @@ public class YamlConfig implements IConfig {
   private void invalidateLocateKeyCacheFor(MappingNode node, String key) {
     Map<String, @Nullable NodeTuple> containerCache = this.locateKeyCache.get(node);
 
-    if (containerCache != null) {
+    if (containerCache != null)
       containerCache.remove(key);
-
-      // If there's an expression marker suffix used with this configuration
-      if (expressionMarkerSuffix != null) {
-
-        // It's appended, also remove the cache entry for the non-suffixed version
-        if (key.endsWith(expressionMarkerSuffix))
-          containerCache.remove(key.substring(0, key.length() - 1));
-
-        // It's not appended, also remove the cache entry for the suffixed version
-        else
-          containerCache.remove(key + expressionMarkerSuffix);
-      }
-    }
   }
 
   /**
@@ -728,7 +682,7 @@ public class YamlConfig implements IConfig {
    */
   private @NotNull LocateNodeResult locateNode(@Nullable String path, boolean self, boolean forceCreateMappings) {
     if (path == null)
-      return new LocateNodeResult(rootNode, false, null);
+      return new LocateNodeResult(rootNode, null);
 
     // Keys should never contain any whitespace
     path = path.trim();
@@ -737,7 +691,6 @@ public class YamlConfig implements IConfig {
       throw new IllegalArgumentException("Invalid path specified: " + path);
 
     Node node = rootNode;
-    boolean markedForExpressions = false;
     Stack<MappingNode> containerStack = new Stack<>();
 
     int endIndex = path.indexOf('.'), beginIndex = 0;
@@ -752,26 +705,12 @@ public class YamlConfig implements IConfig {
       String pathPart = path.substring(beginIndex, endIndex);
 
       // Not a mapping node, cannot look up a path-part, the key has to be invalid
-      if (!(node instanceof MappingNode))
-        return new LocateNodeResult(null, markedForExpressions, containerStack);
-
-      MappingNode mapping = (MappingNode) node;
+      if (!(node instanceof MappingNode mapping))
+        return new LocateNodeResult(null, containerStack);
 
       containerStack.push(mapping);
 
       NodeTuple keyValueTuple = locateKey(mapping, pathPart);
-      boolean markedAlready = expressionMarkerSuffix != null && pathPart.endsWith(expressionMarkerSuffix);
-
-      // The k-v tuple could not be located and isn't marked for expressions already
-      // Try to append the expression marker and check for a match again
-      if (keyValueTuple == null && !markedAlready) {
-        keyValueTuple = locateKey(mapping, pathPart + expressionMarkerSuffix);
-        markedAlready = true;
-      }
-
-      // There was a tuple available and it carried the expression marker
-      if (keyValueTuple != null && markedAlready)
-        markedForExpressions = true;
 
       // Target tuple could not be located or is of wrong value type, create a
       // new tuple of value type mapping and set it within the tree
@@ -790,7 +729,7 @@ public class YamlConfig implements IConfig {
 
       // Current path-part does not exist
       if (keyValueTuple == null)
-        return new LocateNodeResult(null, markedForExpressions, containerStack);
+        return new LocateNodeResult(null, containerStack);
 
       // On the last iteration and the key itself has been requested
       if (endIndex == path.length() && self)
@@ -810,7 +749,7 @@ public class YamlConfig implements IConfig {
         break;
     }
 
-    return new LocateNodeResult(node, markedForExpressions, containerStack);
+    return new LocateNodeResult(node, containerStack);
   }
 
   /**
@@ -857,18 +796,17 @@ public class YamlConfig implements IConfig {
    * Unwraps any given node by unwrapping scalar values first, then - if applicable - collecting them
    * into maps or lists, as by the node's tag. Null tags will result in null values.
    * @param node Node to unwrap
-   * @param markedForExpressions Whether expressions should be parsed
    * @return Unwrapped node as a Java value
    */
-  private @Nullable Object unwrapNode(Node node, boolean markedForExpressions) {
+  private @Nullable Object unwrapNode(Node node) {
     if (node instanceof ScalarNode)
-      return unwrapScalarNode((ScalarNode) node, markedForExpressions);
+      return unwrapScalarNode((ScalarNode) node);
 
     if (node instanceof SequenceNode) {
       List<Object> values = new ArrayList<>();
 
       for (Node item : ((SequenceNode) node).getValue())
-        values.add(unwrapNode(item, markedForExpressions));
+        values.add(unwrapNode(item));
 
       return values;
     }
@@ -876,25 +814,8 @@ public class YamlConfig implements IConfig {
     if (node instanceof MappingNode) {
       Map<Object, Object> values = new LinkedHashMap<>();
 
-      for (NodeTuple item : ((MappingNode) node).getValue()) {
-        boolean isItemMarkedForExpressions = markedForExpressions;
-
-        // Expressions within keys are - of course - not supported
-        Object key = unwrapNode(item.getKeyNode(), false);
-
-        // If the key is a string, it might hold an attached marker which needs to be stripped off
-        if (key instanceof String) {
-          String keyS = (String) key;
-
-          // Strip of trailing marker, also mark for expressions (if not marked already)
-          if (expressionMarkerSuffix != null && keyS.endsWith(expressionMarkerSuffix)) {
-            key = keyS.substring(0, keyS.length() - 1);
-            isItemMarkedForExpressions = true;
-          }
-        }
-
-        values.put(key, unwrapNode(item.getValueNode(), isItemMarkedForExpressions));
-      }
+      for (NodeTuple item : ((MappingNode) node).getValue())
+        values.put(unwrapNode(item.getKeyNode()), unwrapNode(item.getValueNode()));
 
       return values;
     }
@@ -942,19 +863,13 @@ public class YamlConfig implements IConfig {
   /**
    * Unwraps a {@link ScalarNode} to a java type
    * @param node Node to unwrap
-   * @param markedForExpressions Whether expressions should be parsed
    * @return Unwrapped java value
    */
-  private @Nullable Object unwrapScalarNode(ScalarNode node, boolean markedForExpressions) {
+  private @Nullable Object unwrapScalarNode(ScalarNode node) {
     Tag tag = node.getTag();
 
     if (tag == Tag.NULL)
       return null;
-
-    // If a node is marked for expression either itself or by a parent node, it
-    // will be parsed as such, no matter it's tag, as it's a user-choice
-    if (evaluator != null && markedForExpressions)
-      return evaluator.optimizeExpression(evaluator.parseString(node.getValue()));
 
     if (tag == Tag.STR)
       return node.getValue();

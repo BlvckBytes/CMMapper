@@ -24,11 +24,9 @@
 
 package at.blvckbytes.cm_mapper;
 
-import me.blvckbytes.gpeee.IExpressionEvaluator;
-
 @FunctionalInterface
 public interface FValueConverter {
 
-  Object apply(Object value, IExpressionEvaluator evaluator);
+  Object apply(Object value);
 
 }

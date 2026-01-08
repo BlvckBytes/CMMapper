@@ -51,11 +51,11 @@ public class ConfigMapperTests {
     IConfigMapper mapper = helper.makeMapper("database_section.yml");
     DatabaseSectionEvaluables section = mapper.mapSection(null, DatabaseSectionEvaluables.class);
 
-    assertEquals("localhost", section.getHost().asScalar(ScalarType.STRING, helper.getEnv()));
-    assertEquals("3306", section.getPort().asScalar(ScalarType.STRING, helper.getEnv()));
-    assertEquals("config_mapper", section.getDatabase().asScalar(ScalarType.STRING, helper.getEnv()));
-    assertEquals("root", section.getUsername().asScalar(ScalarType.STRING, helper.getEnv()));
-    assertEquals("abc123", section.getPassword().asScalar(ScalarType.STRING, helper.getEnv()));
+    assertEquals("localhost", section.getHost());
+    assertEquals("3306", section.getPort());
+    assertEquals("config_mapper", section.getDatabase());
+    assertEquals("root", section.getUsername());
+    assertEquals("abc123", section.getPassword());
   }
 
   @Test
@@ -118,10 +118,10 @@ public class ConfigMapperTests {
     UiLayoutSection section = mapper.mapSection(null, UiLayoutSection.class);
 
     assertEquals("workbench", section.getUiName());
-    assertEquals(25L, section.getLayout().get("output").<Long>asScalar(ScalarType.LONG, helper.getEnv()));
-    assertEquals(16L, section.getLayout().get("previous").<Long>asScalar(ScalarType.LONG, helper.getEnv()));
-    assertEquals(34L, section.getLayout().get("next").<Long>asScalar(ScalarType.LONG, helper.getEnv()));
-    assertEquals(24L, section.getLayout().get("indicator").<Long>asScalar(ScalarType.LONG, helper.getEnv()));
+    assertEquals("25", section.getLayout().get("output"));
+    assertEquals("16", section.getLayout().get("previous"));
+    assertEquals("34", section.getLayout().get("next"));
+    assertEquals("24", section.getLayout().get("indicator"));
   }
 
   @Test
@@ -346,7 +346,7 @@ public class ConfigMapperTests {
       @Override
       public @Nullable FValueConverter getConverterFor(Class<?> type) {
         if (type == CustomObject.class)
-          return (value, evaluator) -> new CustomObject(((String) value));
+          return value -> new CustomObject(((String) value));
         return null;
       }
     };

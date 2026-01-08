@@ -68,17 +68,6 @@ public class YamlConfigReadTests {
   }
 
   @Test
-  public void shouldParseExpressions() throws FileNotFoundException {
-    YamlConfig config = helper.makeConfig("expressions.yml");
-    helper.assertExpression(10 + 20 * 2L, config.get("a.b"));
-    assertEquals("10 + 20 * 2", config.get("a.c"));
-    assertEquals("20 * 3", config.get("d.e.f"));
-    assertEquals("\"hello \" & \"world\"", config.get("d.e.g"));
-    helper.assertExpression(20 * 3L, config.get("d.h.i"));
-    helper.assertExpression("hello world", config.get("d.h.j"));
-  }
-
-  @Test
   public void shouldCheckKeyExistence() throws FileNotFoundException {
     YamlConfig config = helper.makeConfig("key_existence.yml");
     assertTrue(config.exists("a.b"));

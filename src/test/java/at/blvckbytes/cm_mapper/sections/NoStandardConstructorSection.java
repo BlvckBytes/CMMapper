@@ -32,7 +32,6 @@ public class NoStandardConstructorSection extends AConfigSection {
   private String a, b, c;
 
   public NoStandardConstructorSection(String a, String b, String c) {
-    super(null);
     this.a = a;
     this.b = b;
     this.c = c;
