@@ -57,6 +57,8 @@ public class YamlConfig implements IConfig {
     Supplier<Boolean> removeRoutine
   ) {}
 
+  private record Tuple<A, B>(A a, B b) {}
+
   private record LocateNodeResult(@Nullable Node node, Stack<MappingNode> containerStack) {
     @Nullable MappingNode getLastContainer() {
       if (containerStack.isEmpty())
@@ -493,7 +495,7 @@ public class YamlConfig implements IConfig {
     List<CommentLine> comments = new ArrayList<>();
 
     for (String line : lines) {
-      CommentType type = StringUtils.isBlank(line) ? CommentType.BLANK_LINE : CommentType.BLOCK;
+      CommentType type = line.isBlank() ? CommentType.BLANK_LINE : CommentType.BLOCK;
       comments.add(new CommentLine(null, null, line, type));
     }
 
@@ -540,7 +542,7 @@ public class YamlConfig implements IConfig {
       container = (MappingNode) locateNode(keyPath.substring(0, lastDotIndex), false, forceCreateMappings).node;
     }
 
-    if (container == null || StringUtils.isBlank(keyPart))
+    if (container == null || keyPart.isBlank())
       throw new IllegalArgumentException("Invalid path specified: " + keyPath);
 
     if (!keyPath.endsWith(keyPart))
@@ -667,7 +669,7 @@ public class YamlConfig implements IConfig {
     // Keys should never contain any whitespace
     path = path.trim();
 
-    if (StringUtils.isBlank(path))
+    if (path.isBlank())
       throw new IllegalArgumentException("Invalid path specified: " + path);
 
     Node node = rootNode;

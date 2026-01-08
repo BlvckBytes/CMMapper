@@ -33,6 +33,8 @@ import java.util.stream.Collectors;
 
 public class ConfigMapper implements IConfigMapper {
 
+  private record Tuple<A, B>(A a, B b) {}
+
   private final IConfig config;
   private final ValueConverter valueConverter;
 
@@ -170,7 +172,7 @@ public class ConfigMapper implements IConfigMapper {
     while (!path.isEmpty()) {
       String key = dotIndex < 0 ? path : path.substring(0, dotIndex);
 
-      if (StringUtils.isBlank(key))
+      if (key.isBlank())
         throw new MappingError("Cannot resolve a blank key");
 
       path = dotIndex < 0 ? "" : path.substring(dotIndex + 1);
@@ -390,10 +392,10 @@ public class ConfigMapper implements IConfigMapper {
    * @return Path A joined with path B
    */
   private String joinPaths(@Nullable String a, @Nullable String b) {
-    if (a == null || StringUtils.isBlank(a))
+    if (a == null || a.isBlank())
       return b;
 
-    if (b == null || StringUtils.isBlank(b))
+    if (b == null || b.isBlank())
       return a;
 
     if (a.endsWith(".") && b.startsWith("."))
