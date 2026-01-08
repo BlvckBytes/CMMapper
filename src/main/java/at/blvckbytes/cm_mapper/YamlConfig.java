@@ -24,7 +24,6 @@
 
 package at.blvckbytes.cm_mapper;
 
-import at.blvckbytes.cm_mapper.logging.DebugLogSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
@@ -40,8 +39,6 @@ import org.yaml.snakeyaml.representer.Representer;
 import java.io.*;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class YamlConfig implements IConfig {
 
@@ -57,7 +54,6 @@ public class YamlConfig implements IConfig {
   private static final Yaml YAML;
   private static final DumperOptions DUMPER_OPTIONS;
 
-  private final Logger logger;
   private final Map<MappingNode, Map<String, @Nullable NodeTuple>> locateKeyCache;
   private final List<MergedNodeTuple> mergedTuples;
 
@@ -78,8 +74,7 @@ public class YamlConfig implements IConfig {
     YAML = new Yaml(new Constructor(loaderOptions), new Representer(DUMPER_OPTIONS), DUMPER_OPTIONS, loaderOptions);
   }
 
-  public YamlConfig(Logger logger) {
-    this.logger = logger;
+  public YamlConfig() {
     this.locateKeyCache = new HashMap<>();
     this.mergedTuples = new ArrayList<>();
   }
@@ -106,8 +101,6 @@ public class YamlConfig implements IConfig {
 
     if (!(root instanceof MappingNode))
       throw new IllegalStateException("The top level of a config has to be a map.");
-
-    logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Successfully loaded the YAML root node using the provided reader");
 
     // Swap out root node and execute standard loading routines
     this.rootNode = (MappingNode) root;
@@ -255,8 +248,6 @@ public class YamlConfig implements IConfig {
   }
 
   public void save(Writer writer) throws IOException {
-    logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Serializing the YAML root node to the provided writer");
-
     if (this.rootNode == null || this.rootNode.getValue().isEmpty()) {
       writer.write("");
       return;
@@ -434,27 +425,17 @@ public class YamlConfig implements IConfig {
 
   @Override
   public @Nullable Object get(@Nullable String path) {
-    logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Object at path=" + path + " has been requested");
-
     LocateNodeResult target = locateNode(path, false, false);
-    Object value = target.node == null ? null : unwrapNode(target.node);
-
-    logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Returning content of path=" + path + " with value=" + value);
-
-    return value;
+    return target.node == null ? null : unwrapNode(target.node);
   }
 
   @Override
   public void set(@Nullable String path, @Nullable Object value) {
-    logger.log(Level.FINEST, () -> DebugLogSource.YAML + "An update of value=" + value + " at path=" + path + " has been requested");
-
     Node wrappedValue = wrapValue(value);
 
     if (path == null) {
       if (!(wrappedValue instanceof MappingNode))
         throw new IllegalArgumentException("Cannot exchange the root-node for a non-map node");
-
-      logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Swapped out the root node");
 
       rootNode = (MappingNode) wrappedValue;
       extractHeader();
@@ -466,11 +447,7 @@ public class YamlConfig implements IConfig {
 
   @Override
   public void remove(@Nullable String path) {
-    logger.log(Level.FINEST, () -> DebugLogSource.YAML + "The removal of path=" + path + " has been requested");
-
     if (path == null) {
-      logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Reset the root node");
-
       rootNode = createNewMappingNode(null);
       return;
     }
@@ -486,21 +463,13 @@ public class YamlConfig implements IConfig {
 
   @Override
   public boolean exists(@Nullable String path) {
-    logger.log(Level.FINEST, () -> DebugLogSource.YAML + "An existence check of path=" + path + " has been requested");
-
     // For a key to exist, it's path has to exist within the
     // config, even if it points at a null value
-    boolean exists = locateNode(path, true, false).node != null;
-
-    logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Returning existence value for path=" + path + " of exists=" + exists);
-
-    return exists;
+    return locateNode(path, true, false).node != null;
   }
 
   @Override
   public void attachComment(@Nullable String path, List<String> lines, boolean self) {
-    logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Attaching a comment to path=" + path + " (self=" + self + ") of lines=" + lines + " has been requested");
-
     Node target = locateNode(path, self, false).node;
 
     if (target == null)
@@ -518,8 +487,6 @@ public class YamlConfig implements IConfig {
 
   @Override
   public @Nullable List<String> readComment(@Nullable String path, boolean self) {
-    logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Reading the comment at path=" + path + " (self=" + self + ") has been requested");
-
     Node target = locateNode(path, self, false).node;
 
     if (target == null)
@@ -536,8 +503,6 @@ public class YamlConfig implements IConfig {
 
       comments.add(comment.getValue());
     }
-
-    logger.log(Level.FINEST, () -> DebugLogSource.YAML + "Returning comments for path=" + path + " comments=" + comments);
 
     return comments;
   }

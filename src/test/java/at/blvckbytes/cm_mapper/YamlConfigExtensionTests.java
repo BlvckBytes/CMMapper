@@ -27,7 +27,6 @@ package at.blvckbytes.cm_mapper;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,7 +38,7 @@ public class YamlConfigExtensionTests {
   @Test
   public void shouldThrowWhenTryingToExtendFromAnUnloadedConfig() throws Exception {
     YamlConfig baseConfig = helper.makeConfig("mappings_base.yml");
-    YamlConfig unloadedConfig = new YamlConfig(Logger.getGlobal());
+    YamlConfig unloadedConfig = new YamlConfig();
     assertThrows(IllegalStateException.class, () -> baseConfig.extendMissingKeys(unloadedConfig), "Other config has not yet been loaded");
   }
 

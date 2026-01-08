@@ -33,17 +33,10 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestHelper {
-
-  private final Logger logger;
-
-  public TestHelper() {
-    this.logger = Logger.getGlobal();
-  }
 
   /**
    * Create a new config instance and load its contents from a yaml file
@@ -51,7 +44,7 @@ public class TestHelper {
    * @return Loaded yaml configuration instance
    */
   public YamlConfig makeConfig(@Nullable String fileName) throws FileNotFoundException {
-    YamlConfig config = new YamlConfig(this.logger);
+    YamlConfig config = new YamlConfig();
 
     if (fileName != null)
       config.load(new FileReader("src/test/resources/" + fileName));
@@ -78,7 +71,7 @@ public class TestHelper {
    */
   public IConfigMapper makeMapper(String fileName, IValueConverterRegistry converterRegistry) throws FileNotFoundException {
     YamlConfig config = makeConfig(fileName);
-    return new ConfigMapper(config, this.logger, converterRegistry);
+    return new ConfigMapper(config, converterRegistry);
   }
 
   /**
