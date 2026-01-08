@@ -25,6 +25,7 @@
 package at.blvckbytes.cm_mapper.sections;
 
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -34,6 +35,10 @@ public class UiLayoutSection extends ConfigSection {
 
   private String uiName;
   private Map<String, String> layout;
+
+  public UiLayoutSection(InterpretationEnvironment baseEnvironment) {
+    super(baseEnvironment);
+  }
 
   @Override
   public Class<?> runtimeDecide(String field) {

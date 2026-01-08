@@ -3,6 +3,7 @@ package at.blvckbytes.cm_mapper.section.command;
 import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.cm_mapper.mapper.section.CSIgnore;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import org.bukkit.command.Command;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +25,9 @@ public abstract class CommandSection extends ConfigSection {
   @CSIgnore
   public final String initialName;
 
-  public CommandSection(String initialName) {
+  public CommandSection(String initialName, InterpretationEnvironment baseEnvironment) {
+    super(baseEnvironment);
+
     this.initialName = initialName;
   }
 

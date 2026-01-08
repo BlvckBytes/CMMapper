@@ -28,6 +28,7 @@ import at.blvckbytes.cm_mapper.mapper.ConfigMapper;
 import at.blvckbytes.cm_mapper.mapper.IConfigMapper;
 import at.blvckbytes.cm_mapper.mapper.ValueConverter;
 import at.blvckbytes.cm_mapper.mapper.YamlConfig;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.function.Executable;
 
@@ -75,7 +76,7 @@ public class TestHelper {
    */
   public IConfigMapper makeMapper(String fileName, ValueConverter valueConverter) throws FileNotFoundException {
     YamlConfig config = makeConfig(fileName);
-    return new ConfigMapper(config, valueConverter);
+    return new ConfigMapper(config, new InterpretationEnvironment(), valueConverter);
   }
 
   /**

@@ -18,6 +18,10 @@ public class GuiItemStackSection extends ItemStackSection {
   @CSIgnore
   private @Nullable Set<Integer> displaySlots;
 
+  public GuiItemStackSection(InterpretationEnvironment baseEnvironment) {
+    super(baseEnvironment);
+  }
+
   @Override
   public void afterParsing(List<Field> fields) throws Exception {
     super.afterParsing(fields);

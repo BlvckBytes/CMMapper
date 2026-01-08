@@ -36,7 +36,9 @@ public class GuiSection<T extends ConfigSection> extends ConfigSection {
   @CSIgnore
   public InterpretationEnvironment inventoryEnvironment;
 
-  public GuiSection(Class<T> itemsSectionClass) {
+  public GuiSection(Class<T> itemsSectionClass, InterpretationEnvironment baseEnvironment) {
+    super(baseEnvironment);
+
     this.itemsSectionClass = itemsSectionClass;
   }
 

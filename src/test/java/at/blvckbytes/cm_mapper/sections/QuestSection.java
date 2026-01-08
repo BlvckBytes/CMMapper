@@ -26,6 +26,7 @@ package at.blvckbytes.cm_mapper.sections;
 
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.cm_mapper.mapper.section.CSInlined;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 
 public class QuestSection extends ConfigSection {
 
@@ -33,6 +34,10 @@ public class QuestSection extends ConfigSection {
 
   @CSInlined
   private Object parameter;
+
+  public QuestSection(InterpretationEnvironment baseEnvironment) {
+    super(baseEnvironment);
+  }
 
   @Override
   public Class<?> runtimeDecide(String field) {

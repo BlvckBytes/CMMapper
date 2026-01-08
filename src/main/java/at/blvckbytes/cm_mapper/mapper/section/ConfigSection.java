@@ -24,6 +24,7 @@
 
 package at.blvckbytes.cm_mapper.mapper.section;
 
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -44,9 +45,11 @@ public abstract class ConfigSection {
   }
 
   private final Map<Class<?>, DefaultSupplier> fieldDefaultSuppliers;
+  protected final InterpretationEnvironment baseEnvironment;
 
-  public ConfigSection() {
+  public ConfigSection(InterpretationEnvironment baseEnvironment) {
     this.fieldDefaultSuppliers = new HashMap<>();
+    this.baseEnvironment = baseEnvironment;
   }
 
   /**

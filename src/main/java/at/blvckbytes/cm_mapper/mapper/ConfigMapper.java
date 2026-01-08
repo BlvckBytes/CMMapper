@@ -25,6 +25,7 @@
 package at.blvckbytes.cm_mapper.mapper;
 
 import at.blvckbytes.cm_mapper.mapper.section.*;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
@@ -36,10 +37,16 @@ public class ConfigMapper implements IConfigMapper {
   private record Tuple<A, B>(A a, B b) {}
 
   private final IConfig config;
+  private final InterpretationEnvironment baseEnvironment;
   private final ValueConverter valueConverter;
 
-  public ConfigMapper(IConfig config, ValueConverter valueConverter) {
+  public ConfigMapper(
+    IConfig config,
+    InterpretationEnvironment baseEnvironment,
+    ValueConverter valueConverter
+  ) {
     this.config = config;
+    this.baseEnvironment = baseEnvironment;
     this.valueConverter = valueConverter;
   }
 
@@ -66,7 +73,7 @@ public class ConfigMapper implements IConfigMapper {
    * @return Instantiated class with mapped fields
    */
   private <T extends ConfigSection> T mapSectionSub(@Nullable String root, @Nullable Map<?, ?> source, Class<T> type) throws Exception {
-      T instance = findStandardConstructor(type).newInstance();
+      T instance = findStandardConstructor(type).newInstance(baseEnvironment);
 
       Tuple<List<Field>, Iterator<Field>> fields = findApplicableFields(type);
 
@@ -415,7 +422,7 @@ public class ConfigMapper implements IConfigMapper {
    */
   private<T> Constructor<T> findStandardConstructor(Class<T> type) {
     try {
-      Constructor<T> constructor = type.getDeclaredConstructor();
+      Constructor<T> constructor = type.getDeclaredConstructor(InterpretationEnvironment.class);
 
       if (!Modifier.isPublic(constructor.getModifiers()))
         throw new IllegalStateException("The standard-constructor of a config-section has to be public");

@@ -176,7 +176,7 @@ public class ConfigHandler implements InterpreterLogger {
         }
       }
 
-      ConfigMapper mapper = new ConfigMapper(config, (input, type) -> {
+      ConfigMapper mapper = new ConfigMapper(config, baseEnvironment, (input, type) -> {
         if (type == ComponentMarkup.class)
           return new ComponentMarkup(String.valueOf(input), baseEnvironment, this);
 

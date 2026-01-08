@@ -23,6 +23,10 @@ public class ItemStackSection extends ConfigSection {
   private @Nullable ComponentExpression amount;
   private @Nullable ComponentMarkup textures;
 
+  public ItemStackSection(InterpretationEnvironment baseEnvironment) {
+    super(baseEnvironment);
+  }
+
   public void patch(ItemStack item, InterpretationEnvironment environment) {
     var meta = item.getItemMeta();
 

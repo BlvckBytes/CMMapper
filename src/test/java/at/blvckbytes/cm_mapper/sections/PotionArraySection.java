@@ -25,6 +25,7 @@
 package at.blvckbytes.cm_mapper.sections;
 
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -34,6 +35,10 @@ public class PotionArraySection extends ConfigSection {
   private String type;
 
   private PotionEffectSection[] effects;
+
+  public PotionArraySection(InterpretationEnvironment baseEnvironment) {
+    super(baseEnvironment);
+  }
 
   @Override
   public Class<?> runtimeDecide(String field) {

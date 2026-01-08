@@ -26,6 +26,7 @@ package at.blvckbytes.cm_mapper.sections;
 
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.cm_mapper.mapper.section.CSIgnore;
+import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -41,6 +42,10 @@ public class IgnoreSection extends ConfigSection {
   private String ignored3;
 
   private static String ignored4;
+
+  public IgnoreSection(InterpretationEnvironment baseEnvironment) {
+    super(baseEnvironment);
+  }
 
   @Override
   public Class<?> runtimeDecide(String field) {
