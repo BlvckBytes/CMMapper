@@ -15,6 +15,11 @@ public class PlainStringComponentConstructor implements ComponentConstructor<Str
   public static final PlainStringComponentConstructor INSTANCE = new PlainStringComponentConstructor();
 
   @Override
+  public Class<String> getComponentClass() {
+    return String.class;
+  }
+
+  @Override
   public boolean doesSupport(ConstructorFeature feature) {
     return true;
   }

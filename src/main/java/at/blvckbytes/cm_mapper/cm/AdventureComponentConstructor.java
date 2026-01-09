@@ -26,6 +26,11 @@ public class AdventureComponentConstructor implements ComponentConstructor<Compo
   private AdventureComponentConstructor() {}
 
   @Override
+  public Class<Component> getComponentClass() {
+    return Component.class;
+  }
+
+  @Override
   public boolean doesSupport(ConstructorFeature feature) {
     return true;
   }
