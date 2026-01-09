@@ -41,14 +41,25 @@ public class ComponentExpression {
     return ExpressionInterpreter.interpret(expressionNode, finalEnvironment, logger);
   }
 
-  public static Set<Integer> asIntSet(@Nullable ComponentExpression value, InterpretationEnvironment environment) {
+  public static int asInt(@Nullable ComponentExpression value, @Nullable InterpretationEnvironment environment) {
+    if (value == null)
+      return 0;
+
+    var finalEnvironment = environment == null ? value.baseEnvironment : environment.copy().inheritFrom(value.baseEnvironment, false);
+
+    return (int) finalEnvironment.getValueInterpreter().asLong(value.interpret(finalEnvironment));
+  }
+
+  public static Set<Integer> asIntSet(@Nullable ComponentExpression value, @Nullable InterpretationEnvironment environment) {
     if (value == null)
       return Collections.emptySet();
 
+    var finalEnvironment = environment == null ? value.baseEnvironment : environment.copy().inheritFrom(value.baseEnvironment, false);
+
     var result = new HashSet<Integer>();
 
-    for (var slotEntry : environment.getValueInterpreter().asList(value.interpret(environment)))
-      result.add((int) environment.getValueInterpreter().asLong(slotEntry));
+    for (var slotEntry : finalEnvironment.getValueInterpreter().asList(value.interpret(finalEnvironment)))
+      result.add((int) finalEnvironment.getValueInterpreter().asLong(slotEntry));
 
     return result;
   }
