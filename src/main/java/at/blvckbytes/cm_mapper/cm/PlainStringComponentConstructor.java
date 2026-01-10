@@ -1,9 +1,6 @@
 package at.blvckbytes.cm_mapper.cm;
 
-import at.blvckbytes.component_markup.constructor.ComponentConstructor;
-import at.blvckbytes.component_markup.constructor.ConstructorFeature;
-import at.blvckbytes.component_markup.constructor.SlotContext;
-import at.blvckbytes.component_markup.constructor.SlotType;
+import at.blvckbytes.component_markup.constructor.*;
 import at.blvckbytes.component_markup.util.TriState;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,7 +72,7 @@ public class PlainStringComponentConstructor implements ComponentConstructor<Str
   public void setInsertAction(StringBuilder component, String value) {}
 
   @Override
-  public void setColor(StringBuilder component, long packedColor) {}
+  public void setColor(StringBuilder component, long packedColor, boolean overwrite) {}
 
   @Override
   public void setShadowColor(StringBuilder component, long packedColor) {}

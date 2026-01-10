@@ -146,7 +146,12 @@ public class AdventureComponentConstructor implements ComponentConstructor<Compo
   }
 
   @Override
-  public void setColor(ComponentBuilder<?, ?> component, long packedColor) {
+  public void setColor(ComponentBuilder<?, ?> component, long packedColor, boolean overwrite) {
+    if (!overwrite) {
+      component.colorIfAbsent(TextColor.color((int) packedColor));
+      return;
+    }
+
     component.color(TextColor.color((int) packedColor));
   }
 
