@@ -27,6 +27,7 @@ package at.blvckbytes.cm_mapper;
 import at.blvckbytes.cm_mapper.cm.ComponentExpression;
 import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
 import at.blvckbytes.cm_mapper.mapper.ConfigMapper;
+import at.blvckbytes.cm_mapper.mapper.MappingError;
 import at.blvckbytes.cm_mapper.mapper.YamlConfig;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import at.blvckbytes.component_markup.markup.ast.tag.built_in.BuiltInTagRegistry;
@@ -35,7 +36,9 @@ import at.blvckbytes.component_markup.markup.parser.MarkupParser;
 import at.blvckbytes.component_markup.util.ErrorScreen;
 import at.blvckbytes.component_markup.util.InputView;
 import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
+import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Charsets;
+import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,8 +49,6 @@ import java.util.logging.Logger;
 
 public class ConfigHandler {
 
-  private final Map<String, ConfigMapper> mapperByFileName;
-
   private final Logger logger;
   private final Plugin plugin;
 
@@ -55,8 +56,6 @@ public class ConfigHandler {
   private final File folder;
 
   public ConfigHandler(Plugin plugin, String folderName) {
-    this.mapperByFileName = new HashMap<>();
-
     this.plugin = plugin;
     this.logger = plugin.getLogger();
     this.folderName = folderName.charAt(0) == '/' ? folderName : ("/" + folderName);
@@ -67,15 +66,6 @@ public class ConfigHandler {
       if (!this.folder.mkdirs())
         throw new IllegalStateException("Could not create directories for " + this.folder);
     }
-  }
-
-  public ConfigMapper getMapper(String fileName) throws FileNotFoundException {
-    var mapper = mapperByFileName.get(fileName.toLowerCase());
-
-    if (mapper == null)
-      throw new FileNotFoundException("Could not find the config at " + folderName + "/" + fileName);
-
-    return mapper;
   }
 
   private String getPluginResourcePath(String fileName) {
@@ -187,18 +177,31 @@ public class ConfigHandler {
         }
       }
 
-      ConfigMapper mapper = new ConfigMapper(config, baseEnvironment, interpreterLogger, (input, type) -> {
+      return new ConfigMapper(config, baseEnvironment, interpreterLogger, (input, type) -> {
         if (type == ComponentMarkup.class)
           return new ComponentMarkup(String.valueOf(input), baseEnvironment, interpreterLogger);
 
         if (type == ComponentExpression.class)
           return new ComponentExpression(String.valueOf(input), baseEnvironment, interpreterLogger);
 
+        if (type == Material.class) {
+          var materialExpression = new ComponentMarkup(String.valueOf(input), baseEnvironment, interpreterLogger);
+          var materialString = materialExpression.asPlainString(null);
+          var xMaterial = XMaterial.matchXMaterial(materialString);
+
+          if (xMaterial.isEmpty())
+            throw new MappingError("The material \"" + materialString + "\" is not a valid XMaterial-constant");
+
+          return xMaterial.get().get();
+        }
+
+        if (type == int.class || type == Integer.class) {
+          var numberExpression = new ComponentExpression(String.valueOf(input), baseEnvironment, interpreterLogger);
+          return ComponentExpression.asInt(numberExpression, null);
+        }
+
         return input;
       });
-
-      mapperByFileName.put(fileName.toLowerCase(), mapper);
-      return mapper;
     }
   }
 }

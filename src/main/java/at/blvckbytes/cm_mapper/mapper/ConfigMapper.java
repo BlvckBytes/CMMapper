@@ -207,6 +207,31 @@ public class ConfigMapper implements IConfigMapper {
     return source;
   }
 
+  private boolean isInstanceIgnoreBoxing(Class<?> type, Object instance) {
+    if (type.isInstance(instance))
+      return true;
+
+    if (type == int.class && instance instanceof Integer)
+      return true;
+
+    if (type == long.class && instance instanceof Long)
+      return true;
+
+    if (type == byte.class && instance instanceof Byte)
+      return true;
+
+    if (type == double.class && instance instanceof Double)
+      return true;
+
+    if (type == float.class && instance instanceof Float)
+      return true;
+
+    if (type == char.class && instance instanceof Character)
+      return true;
+
+    return type == boolean.class && instance instanceof Boolean;
+  }
+
   /**
    * Tries to convert the input object to the specified type, by either stringifying,
    * by converting to an enum-constant or by parsing a {@link ConfigSection} if the
@@ -221,7 +246,7 @@ public class ConfigMapper implements IConfigMapper {
     if (!type.isInstance(input))
       input = valueConverter.convert(input, type);
 
-    if (type.isInstance(input))
+    if (isInstanceIgnoreBoxing(type, input))
       return input;
 
     if (type == Object.class)
