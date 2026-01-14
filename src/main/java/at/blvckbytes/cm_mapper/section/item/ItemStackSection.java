@@ -86,7 +86,7 @@ public class ItemStackSection extends ConfigSection {
       if (xMaterial.isPresent())
         return xMaterial.get().get();
 
-      type.log("Could not locate an XMeterial called \"" + typeName + "\"", null);
+      type.log("Could not locate an XMaterial called \"" + typeName + "\"", null);
     }
 
     return Material.BARRIER;
