@@ -31,6 +31,9 @@ public class ItemStackSection extends ConfigSection {
   public void patch(ItemStack item, InterpretationEnvironment environment) {
     var meta = item.getItemMeta();
 
+    if (meta == null)
+      return;
+
     if (amount != null) {
       var amountValue = amount.interpret(environment);
 
