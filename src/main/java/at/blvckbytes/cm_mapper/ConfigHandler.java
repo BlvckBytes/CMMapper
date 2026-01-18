@@ -156,13 +156,8 @@ public class ConfigHandler {
       if (config.get("cLut") instanceof Map<?,?> map) {
         for (var entry : map.entrySet()) {
           var key = String.valueOf(entry.getKey());
-          var view = InputView.of(String.valueOf(entry.getValue()));
 
-          try {
-            globalLookupTable.put(key, MarkupParser.parse(view, BuiltInTagRegistry.INSTANCE));
-          } catch (MarkupParseException e) {
-            interpreterLogger.log(view, e.position, e.getErrorMessage(), null);
-          }
+          globalLookupTable.put(key, parseLeafNodes(entry.getValue(), interpreterLogger));
         }
       }
 
@@ -203,5 +198,33 @@ public class ConfigHandler {
         return input;
       });
     }
+  }
+
+  private Object parseLeafNodes(Object input, InterpreterLogger logger) {
+    if (input instanceof List<?> list) {
+      for (var index = 0; index < list.size(); ++index) {
+        //noinspection unchecked
+        ((List<Object>) list).set(index, parseLeafNodes(list.get(index), logger));
+      }
+      return input;
+    }
+
+    if (input instanceof Map<?, ?> map) {
+      //noinspection unchecked
+      for (var entry : ((Map<?, Object>) map).entrySet())
+        entry.setValue(parseLeafNodes(entry.getValue(), logger));
+
+      return input;
+    }
+
+    var view = InputView.of(String.valueOf(input));
+
+    try {
+      return MarkupParser.parse(view, BuiltInTagRegistry.INSTANCE);
+    } catch (MarkupParseException e) {
+      logger.log(view, e.position, e.getErrorMessage(), null);
+    }
+
+    return input;
   }
 }
