@@ -41,6 +41,15 @@ public class ComponentExpression {
     return ExpressionInterpreter.interpret(expressionNode, finalEnvironment, logger);
   }
 
+  public static double asDouble(@Nullable ComponentExpression value, @Nullable InterpretationEnvironment environment) {
+    if (value == null)
+      return 0;
+
+    var finalEnvironment = environment == null ? value.baseEnvironment : environment.copy().inheritFrom(value.baseEnvironment, false);
+
+    return finalEnvironment.getValueInterpreter().asDouble(value.interpret(finalEnvironment));
+  }
+
   public static int asInt(@Nullable ComponentExpression value, @Nullable InterpretationEnvironment environment) {
     if (value == null)
       return 0;

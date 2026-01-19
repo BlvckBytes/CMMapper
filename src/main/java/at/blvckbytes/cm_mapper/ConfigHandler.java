@@ -195,6 +195,11 @@ public class ConfigHandler {
           return ComponentExpression.asInt(numberExpression, null);
         }
 
+        if (type == double.class || type == Double.class) {
+          var numberExpression = new ComponentExpression(String.valueOf(input), baseEnvironment, interpreterLogger);
+          return ComponentExpression.asDouble(numberExpression, null);
+        }
+
         return input;
       });
     }
