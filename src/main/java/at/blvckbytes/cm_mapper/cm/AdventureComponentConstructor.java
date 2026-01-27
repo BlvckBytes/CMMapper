@@ -5,6 +5,7 @@ import at.blvckbytes.component_markup.util.TriState;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentBuilder;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.ShadowColor;
@@ -43,6 +44,16 @@ public class AdventureComponentConstructor implements ComponentConstructor<Compo
   @Override
   public ComponentBuilder<?, ?> createTextComponent(String text) {
     return Component.text().content(text);
+  }
+
+  @Override
+  public boolean setText(ComponentBuilder<?, ?> component, String text) {
+    if (component instanceof TextComponent.Builder textBuilder) {
+      textBuilder.content(text);
+      return true;
+    }
+
+    return false;
   }
 
   @Override

@@ -32,6 +32,13 @@ public class PlainStringComponentConstructor implements ComponentConstructor<Str
   }
 
   @Override
+  public boolean setText(StringBuilder component, String text) {
+    component.setLength(0);
+    component.append(text);
+    return true;
+  }
+
+  @Override
   public StringBuilder createKeyComponent(String key) {
     return new StringBuilder(key);
   }
