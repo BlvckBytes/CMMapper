@@ -21,7 +21,7 @@ public abstract class CommandSection extends ConfigSection {
   public String evaluatedName;
 
   @CSIgnore
-  private List<String> evaluatedAliases;
+  public List<String> evaluatedAliases;
 
   @CSIgnore
   public final String initialName;
