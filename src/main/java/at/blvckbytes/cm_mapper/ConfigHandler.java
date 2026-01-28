@@ -200,6 +200,11 @@ public class ConfigHandler {
           return ComponentExpression.asDouble(numberExpression, null);
         }
 
+        if (type == boolean.class || type == Boolean.class) {
+          var numberExpression = new ComponentExpression(String.valueOf(input), baseEnvironment, interpreterLogger);
+          return ComponentExpression.asBoolean(numberExpression, null);
+        }
+
         return input;
       });
     }
