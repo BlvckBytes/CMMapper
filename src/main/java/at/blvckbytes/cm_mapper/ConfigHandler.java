@@ -107,21 +107,32 @@ public class ConfigHandler {
     }
   }
 
-  public ConfigMapper loadConfig(String fileName) throws Exception {
-    boolean hasBeenCreated = false;
-
-    File file = new File(this.folder, fileName);
+  /**
+   * @return Whether the file has been created
+   */
+  public boolean saveDefaultConfig(String fileName, boolean overwrite) {
+    var file = new File(this.folder, fileName);
 
     if (file.exists()) {
       if (file.isDirectory())
-        throw new IllegalStateException("Tried to read file; unexpected directory at " + file);
-    } else {
-      this.plugin.saveResource(getPluginResourcePath(fileName), true);
-      hasBeenCreated = true;
+        throw new IllegalStateException("Tried to save file at " + file + ", but found a directory in its place");
+
+      if (!overwrite)
+        return false;
+
+      if (!file.delete())
+        throw new IllegalStateException("Could not delete file at " + file);
     }
 
+    this.plugin.saveResource(getPluginResourcePath(fileName), true);
+    return true;
+  }
+
+  public ConfigMapper loadConfig(String fileName) throws Exception {
+    var hasBeenCreated = saveDefaultConfig(fileName, false);
+
     try (
-      var inputStream = new FileInputStream(file);
+      var inputStream = new FileInputStream(new File(this.folder, fileName));
       var inputStreamReader = new InputStreamReader(inputStream, Charsets.UTF_8)
     ) {
       YamlConfig config = new YamlConfig();
