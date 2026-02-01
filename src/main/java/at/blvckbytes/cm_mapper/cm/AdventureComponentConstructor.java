@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class AdventureComponentConstructor implements ComponentConstructor<ComponentBuilder<?, ?>, Component> {
 
@@ -208,6 +209,15 @@ public class AdventureComponentConstructor implements ComponentConstructor<Compo
   @Override
   public Component finalizeComponent(ComponentBuilder<?, ?> component) {
     return component.asComponent();
+  }
+
+  @Override
+  public void forEachTextOf(Component component, Consumer<String> handler) {
+    if (component instanceof TextComponent textComponent)
+      handler.accept(textComponent.content());
+
+    for (var child : component.children())
+      forEachTextOf(child, handler);
   }
 
   @Override

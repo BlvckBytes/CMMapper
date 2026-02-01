@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class PlainStringComponentConstructor implements ComponentConstructor<StringBuilder, String> {
 
@@ -105,6 +106,11 @@ public class PlainStringComponentConstructor implements ComponentConstructor<Str
   @Override
   public String finalizeComponent(StringBuilder component) {
     return component.toString();
+  }
+
+  @Override
+  public void forEachTextOf(String component, Consumer<String> handler) {
+    handler.accept(component);
   }
 
   @Override
