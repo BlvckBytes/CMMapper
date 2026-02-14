@@ -24,7 +24,6 @@
 
 package at.blvckbytes.cm_mapper;
 
-import at.blvckbytes.cm_mapper.mapper.IConfigMapper;
 import at.blvckbytes.cm_mapper.sections.*;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
@@ -38,7 +37,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSingleSectionFromRootWithNatives() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("database_section.yml");
+    var mapper = helper.makeMapper("database_section.yml");
     DatabaseSectionStrings section = mapper.mapSection(null, DatabaseSectionStrings.class);
 
     assertEquals("localhost", section.getHost());
@@ -50,7 +49,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSingleSectionFromRootWithEvaluables() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("database_section.yml");
+    var mapper = helper.makeMapper("database_section.yml");
     DatabaseSectionEvaluables section = mapper.mapSection(null, DatabaseSectionEvaluables.class);
 
     assertEquals("localhost", section.getHost());
@@ -62,7 +61,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSingleSectionFromPath() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("database_section.yml");
+    var mapper = helper.makeMapper("database_section.yml");
     DatabaseSectionStrings section = mapper.mapSection("connection", DatabaseSectionStrings.class);
 
     assertEquals("localhost", section.getHost());
@@ -74,7 +73,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapNestedSection() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_simple_section.yml");
+    var mapper = helper.makeMapper("potion_simple_section.yml");
     PotionSimpleSection section = mapper.mapSection(null, PotionSimpleSection.class);
 
     assertEquals("throwable", section.getType());
@@ -85,7 +84,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapNestedSectionValuesToNullIfNotAMapping() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_simple_section_no_mapping.yml");
+    var mapper = helper.makeMapper("potion_simple_section_no_mapping.yml");
     PotionSimpleSection section = mapper.mapSection(null, PotionSimpleSection.class);
 
     assertEquals("throwable", section.getType());
@@ -96,7 +95,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapNestedSectionAlwaysValuesToNullIfAbsent() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_simple_section_absent.yml");
+    var mapper = helper.makeMapper("potion_simple_section_absent.yml");
     PotionSimpleSectionAlways section = mapper.mapSection(null, PotionSimpleSectionAlways.class);
 
     assertEquals("throwable", section.getType());
@@ -107,7 +106,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapNestedSectionToNullIfAbsent() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_simple_section_absent.yml");
+    var mapper = helper.makeMapper("potion_simple_section_absent.yml");
     PotionSimpleSection section = mapper.mapSection(null, PotionSimpleSection.class);
 
     assertEquals("throwable", section.getType());
@@ -116,7 +115,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionWithMap() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("ui_layout_section.yml");
+    var mapper = helper.makeMapper("ui_layout_section.yml");
     UiLayoutSection section = mapper.mapSection(null, UiLayoutSection.class);
 
     assertEquals("workbench", section.getUiName());
@@ -128,7 +127,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionWithMapToEmptyIfYamlTypeMismatches() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("ui_layout_section_malformed.yml");
+    var mapper = helper.makeMapper("ui_layout_section_malformed.yml");
     UiLayoutSection section = mapper.mapSection(null, UiLayoutSection.class);
 
     assertNotNull(section.getLayout());
@@ -137,7 +136,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapAlwaysSectionWithMapToEmptyIfKeyIsAbsent() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("ui_layout_section_absent.yml");
+    var mapper = helper.makeMapper("ui_layout_section_absent.yml");
     UiLayoutSectionAlways section = mapper.mapSection(null, UiLayoutSectionAlways.class);
 
     assertNotNull(section.getLayout());
@@ -146,7 +145,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionWithMapToNullIfKeyIsAbsent() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("ui_layout_section_absent.yml");
+    var mapper = helper.makeMapper("ui_layout_section_absent.yml");
     UiLayoutSection section = mapper.mapSection(null, UiLayoutSection.class);
 
     assertNull(section.getLayout());
@@ -154,7 +153,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionWithList() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_list_section.yml");
+    var mapper = helper.makeMapper("potion_list_section.yml");
     PotionListSection section = mapper.mapSection(null, PotionListSection.class);
 
     assertEquals("throwable", section.getType());
@@ -171,7 +170,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionWithListToEmptyIfYamlTypeMismatches() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_list_section_malformed.yml");
+    var mapper = helper.makeMapper("potion_list_section_malformed.yml");
     PotionListSection section = mapper.mapSection(null, PotionListSection.class);
 
     assertNotNull(section.getEffects());
@@ -180,7 +179,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapAlwaysSectionWithListToEmptyIfKeyIsAbsent() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_list_section_absent.yml");
+    var mapper = helper.makeMapper("potion_list_section_absent.yml");
     PotionListSectionAlways section = mapper.mapSection(null, PotionListSectionAlways.class);
 
     assertNotNull(section.getEffects());
@@ -189,7 +188,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionWithListToNullIfKeyIsAbsent() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_list_section_absent.yml");
+    var mapper = helper.makeMapper("potion_list_section_absent.yml");
     PotionListSection section = mapper.mapSection(null, PotionListSection.class);
 
     assertNull(section.getEffects());
@@ -197,7 +196,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionWithArray() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_list_section.yml");
+    var mapper = helper.makeMapper("potion_list_section.yml");
     PotionArraySection section = mapper.mapSection(null, PotionArraySection.class);
 
     assertEquals("throwable", section.getType());
@@ -214,7 +213,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionWithArrayToEmptyIfYamlTypeMismatches() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_list_section_malformed.yml");
+    var mapper = helper.makeMapper("potion_list_section_malformed.yml");
     PotionArraySection section = mapper.mapSection(null, PotionArraySection.class);
 
     assertNotNull(section.getEffects());
@@ -223,7 +222,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapAlwaysSectionWithArrayToEmptyIfKeyIsAbsent() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_list_section_absent.yml");
+    var mapper = helper.makeMapper("potion_list_section_absent.yml");
     PotionArraySectionAlways section = mapper.mapSection(null, PotionArraySectionAlways.class);
 
     assertNotNull(section.getEffects());
@@ -232,7 +231,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionWithArrayToNullIfKeyIsAbsent() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("potion_list_section_absent.yml");
+    var mapper = helper.makeMapper("potion_list_section_absent.yml");
     PotionArraySection section = mapper.mapSection(null, PotionArraySection.class);
 
     assertNull(section.getEffects());
@@ -240,7 +239,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionWithRuntimeDecide() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("quest_block_break.yml");
+    var mapper = helper.makeMapper("quest_block_break.yml");
     QuestSection section = mapper.mapSection(null, QuestSection.class);
 
     assertEquals("block-break", section.getType());
@@ -259,7 +258,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionWithDefaultValue() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("database_section_partial.yml");
+    var mapper = helper.makeMapper("database_section_partial.yml");
     DatabaseSectionStrings section = mapper.mapSection("connection", DatabaseSectionStrings.class);
 
     assertEquals("host_default", section.getHost());
@@ -271,7 +270,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapSectionAndLeaveNonDefaultNonExistingAsNull() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("database_section_partial2.yml");
+    var mapper = helper.makeMapper("database_section_partial2.yml");
     DatabaseSectionStrings section = mapper.mapSection("connection", DatabaseSectionStrings.class);
 
     assertEquals("host_default", section.getHost());
@@ -283,25 +282,25 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldThrowOnRuntimeDecideReturningNull() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("quest_invalid.yml");
+    var mapper = helper.makeMapper("quest_invalid.yml");
     helper.assertThrowsWithMsg(IllegalStateException.class, () -> mapper.mapSection(null, QuestSection.class), "Requesting plain objects is disallowed");
   }
 
   @Test
   public void shouldThrowWhenSectionSelfReferences() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("quest_invalid.yml");
+    var mapper = helper.makeMapper("quest_invalid.yml");
     helper.assertThrowsWithMsg(IllegalStateException.class, () -> mapper.mapSection(null, SelfRefSection.class), "Sections cannot use self-referencing fields");
   }
 
   @Test
   public void shouldThrowWhenNoStandardConstructorAvailable() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("mappings.yml");
+    var mapper = helper.makeMapper("mappings.yml");
     helper.assertThrowsWithMsg(IllegalStateException.class, () -> mapper.mapSection(null, NoStandardConstructorSection.class), "Please specify a standard-constructor of scheme (" + InterpretationEnvironment.class + ", " + InterpreterLogger.class + ") on " + NoStandardConstructorSection.class);
   }
 
   @Test
   public void shouldIgnoreAnnotatedAndStaticFields() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("ignore_section.yml");
+    var mapper = helper.makeMapper("ignore_section.yml");
     IgnoreSection section = mapper.mapSection(null, IgnoreSection.class);
 
     assertNull(section.getIgnored1());
@@ -312,7 +311,7 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldMapEnumValues() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("enum_section.yml");
+    var mapper = helper.makeMapper("enum_section.yml");
     EnumSection section = mapper.mapSection(null, EnumSection.class);
 
     assertEquals(ECustomEnum.HELLO, section.getCustomEnumA());
@@ -323,13 +322,13 @@ public class ConfigMapperTests {
 
   @Test
   public void shouldThrowOnInvalidEnumValues() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("enum_section_with_invalid.yml");
+    var mapper = helper.makeMapper("enum_section_with_invalid.yml");
     helper.assertThrowsWithMsg(IllegalStateException.class, () -> mapper.mapSection(null, EnumSection.class), "Value \"INVALID\" was not one of HELLO, WORLD, ENUM (at path 'customEnumInvalid')");
   }
 
   @Test
   public void shouldMapCustomObject() throws Exception {
-    IConfigMapper mapper = helper.makeMapper("custom_object.yml", (input, type) -> {
+    var mapper = helper.makeMapper("custom_object.yml", (input, type) -> {
       if (type == CustomObject.class)
         return new CustomObject(String.valueOf(input));
       return input;

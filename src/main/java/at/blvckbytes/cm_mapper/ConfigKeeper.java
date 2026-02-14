@@ -1,11 +1,10 @@
 package at.blvckbytes.cm_mapper;
 
+import at.blvckbytes.cm_mapper.mapper.ConfigMapper;
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigKeeper<T extends ConfigSection> {
 
@@ -13,6 +12,8 @@ public class ConfigKeeper<T extends ConfigSection> {
   private final String fileName;
   private final Class<T> rootSectionType;
   private final Map<ReloadPriority, List<Runnable>> reloadListenersByPriority;
+
+  private @Nullable ConfigMapper configMapper;
 
   public T rootSection;
 
@@ -26,6 +27,11 @@ public class ConfigKeeper<T extends ConfigSection> {
     this.rootSectionType = rootSectionType;
     this.reloadListenersByPriority = new HashMap<>();
     this.rootSection = loadRootSection();
+  }
+
+  public ConfigMapper getConfigMapper() {
+    // Already loaded at this point (see constructor)
+    return Objects.requireNonNull(configMapper);
   }
 
   public void registerReloadListener(Runnable listener, ReloadPriority priority) {
@@ -51,6 +57,7 @@ public class ConfigKeeper<T extends ConfigSection> {
   }
 
   private T loadRootSection() throws Exception {
-    return this.configHandler.loadConfig(fileName).mapSection(null, rootSectionType);
+    configMapper = this.configHandler.loadConfig(fileName);
+    return configMapper.mapSection(null, rootSectionType);
   }
 }

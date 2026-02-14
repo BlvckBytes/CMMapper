@@ -29,37 +29,53 @@ import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvir
 import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ConfigMapper implements IConfigMapper {
+public class ConfigMapper {
 
   private record Tuple<A, B>(A a, B b) {}
 
-  private final IConfig config;
+  private final File file;
+  private final YamlConfig config;
   private final InterpretationEnvironment baseEnvironment;
   private final InterpreterLogger interpreterLogger;
   private final ValueConverter valueConverter;
 
   public ConfigMapper(
-    IConfig config,
+    File file,
+    YamlConfig config,
     InterpretationEnvironment baseEnvironment,
     InterpreterLogger interpreterLogger,
     ValueConverter valueConverter
   ) {
+    this.file = file;
     this.config = config;
     this.baseEnvironment = baseEnvironment;
     this.interpreterLogger = interpreterLogger;
     this.valueConverter = valueConverter;
   }
 
-  @Override
-  public IConfig getConfig() {
+  public YamlConfig getConfig() {
     return config;
   }
 
-  @Override
+  public void saveConfig() throws Exception {
+    if (file.exists() && !file.isFile())
+      throw new IllegalStateException("Tried to write file; unexpected directory at " + file);
+
+    try (
+      var outputStream = new FileOutputStream(file);
+      var outputWriter = new OutputStreamWriter(outputStream)
+    ) {
+      config.save(outputWriter);
+    }
+  }
+
   public <T extends ConfigSection> T mapSection(@Nullable String root, Class<T> type) throws Exception {
     return mapSectionSub(root, null, type);
   }

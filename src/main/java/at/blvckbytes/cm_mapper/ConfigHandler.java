@@ -131,8 +131,10 @@ public class ConfigHandler {
   public ConfigMapper loadConfig(String fileName) throws Exception {
     var hasBeenCreated = saveDefaultConfig(fileName, false);
 
+    var configFile = new File(this.folder, fileName);
+
     try (
-      var inputStream = new FileInputStream(new File(this.folder, fileName));
+      var inputStream = new FileInputStream(configFile);
       var inputStreamReader = new InputStreamReader(inputStream, Charsets.UTF_8)
     ) {
       YamlConfig config = new YamlConfig();
@@ -183,7 +185,7 @@ public class ConfigHandler {
         }
       }
 
-      return new ConfigMapper(config, baseEnvironment, interpreterLogger, (input, type) -> {
+      return new ConfigMapper(configFile, config, baseEnvironment, interpreterLogger, (input, type) -> {
         if (type == ComponentMarkup.class)
           return new ComponentMarkup(String.valueOf(input), baseEnvironment, interpreterLogger);
 

@@ -41,7 +41,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class YamlConfig implements IConfig {
+public class YamlConfig {
 
   private interface ExtensionCandidateHandler {
     boolean wasMissingAndHasBeenExtended(NodeTuple tuple, String pathOfTuple, int indexOfTuple);
@@ -440,13 +440,11 @@ public class YamlConfig implements IConfig {
     return updatedKeys;
   }
 
-  @Override
   public @Nullable Object get(@Nullable String path) {
     LocateNodeResult target = locateNode(path, false, false);
     return target.node == null ? null : unwrapNode(target.node);
   }
 
-  @Override
   public void set(@Nullable String path, @Nullable Object value) {
     Node wrappedValue = wrapValue(value);
 
@@ -462,7 +460,6 @@ public class YamlConfig implements IConfig {
     updatePathValue(path, wrappedValue, true);
   }
 
-  @Override
   public void remove(@Nullable String path) {
     if (path == null) {
       rootNode = createNewMappingNode(null);
@@ -478,14 +475,12 @@ public class YamlConfig implements IConfig {
     return new MappingNode(Tag.MAP, true, items, null, null, DUMPER_OPTIONS.getDefaultFlowStyle());
   }
 
-  @Override
   public boolean exists(@Nullable String path) {
     // For a key to exist, its path has to exist within the
     // config, even if it points at a null value
     return locateNode(path, true, false).node != null;
   }
 
-  @Override
   public void attachComment(@Nullable String path, List<String> lines, boolean self) {
     Node target = locateNode(path, self, false).node;
 
@@ -502,7 +497,6 @@ public class YamlConfig implements IConfig {
     target.setBlockComments(comments);
   }
 
-  @Override
   public @Nullable List<String> readComment(@Nullable String path, boolean self) {
     Node target = locateNode(path, self, false).node;
 

@@ -25,7 +25,6 @@
 package at.blvckbytes.cm_mapper;
 
 import at.blvckbytes.cm_mapper.mapper.ConfigMapper;
-import at.blvckbytes.cm_mapper.mapper.IConfigMapper;
 import at.blvckbytes.cm_mapper.mapper.ValueConverter;
 import at.blvckbytes.cm_mapper.mapper.YamlConfig;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
@@ -67,7 +66,7 @@ public class TestHelper {
    * @param fileName Input file within the resources folder
    * @return Mapper instance, operating on the configuration instance
    */
-  public IConfigMapper makeMapper(String fileName) throws FileNotFoundException {
+  public ConfigMapper makeMapper(String fileName) throws FileNotFoundException {
     return makeMapper(fileName, (input, type) -> input);
   }
 
@@ -78,9 +77,9 @@ public class TestHelper {
    * @param valueConverter Value converter to be used
    * @return Mapper instance, operating on the configuration instance
    */
-  public IConfigMapper makeMapper(String fileName, ValueConverter valueConverter) throws FileNotFoundException {
+  public ConfigMapper makeMapper(String fileName, ValueConverter valueConverter) throws FileNotFoundException {
     YamlConfig config = makeConfig(fileName);
-    return new ConfigMapper(config, emptyEnvironment, nullLogger, valueConverter);
+    return new ConfigMapper(null, config, emptyEnvironment, nullLogger, valueConverter);
   }
 
   /**
