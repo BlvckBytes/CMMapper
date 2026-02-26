@@ -24,6 +24,12 @@ public class ComponentMarkup {
   private final InterpretationEnvironment baseEnvironment;
   private final InterpreterLogger logger;
 
+  public ComponentMarkup(MarkupNode markupNode, InterpretationEnvironment baseEnvironment, InterpreterLogger logger) {
+    this.markupNode = markupNode;
+    this.baseEnvironment = baseEnvironment;
+    this.logger = logger;
+  }
+
   public ComponentMarkup(String markup, InterpretationEnvironment baseEnvironment, InterpreterLogger logger) {
     var view = InputView.of(markup);
 
