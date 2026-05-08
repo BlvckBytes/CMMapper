@@ -3,9 +3,7 @@ package at.blvckbytes.cm_mapper.cm;
 import at.blvckbytes.component_markup.constructor.*;
 import at.blvckbytes.component_markup.util.TriState;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentBuilder;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.ShadowColor;
@@ -218,6 +216,15 @@ public class AdventureComponentConstructor implements ComponentConstructor<Compo
 
     for (var child : component.children())
       forEachTextOf(child, handler);
+  }
+
+  @Override
+  public void forEachNonTextUnitOf(Component component, Consumer<Component> handler) {
+    if (component instanceof KeybindComponent || component instanceof TranslatableComponent)
+      handler.accept(component);
+
+    for (var child : component.children())
+      forEachNonTextUnitOf(child, handler);
   }
 
   @Override

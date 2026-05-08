@@ -114,6 +114,11 @@ public class PlainStringComponentConstructor implements ComponentConstructor<Str
   }
 
   @Override
+  public void forEachNonTextUnitOf(String component, Consumer<String> handler) {
+    // NO-OP, seeing how we turn everything into text.
+  }
+
+  @Override
   public void addChildren(StringBuilder component, List<String> children) {
     children.forEach(component::append);
   }
