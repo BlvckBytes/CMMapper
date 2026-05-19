@@ -49,6 +49,11 @@ import java.util.logging.Logger;
 
 public class ConfigHandler {
 
+  private static final String KEY_COMPONENT_LOOKUP_TABLE = "cLut";
+  private static final String KEY_SCALAR_LOOKUP_TABLE = "sLut";
+  private static final String KEY_COMPONENT_GLOBALS = "cGlobals";
+  private static final String KEY_SCALAR_GLOBALS = "sGlobals";
+
   private final Logger logger;
   private final Plugin plugin;
 
@@ -166,7 +171,7 @@ public class ConfigHandler {
       var globalLookupTable = new HashMap<String, Object>();
       baseEnvironment.withVariable("lut", globalLookupTable);
 
-      if (config.get("cLut") instanceof Map<?,?> map) {
+      if (config.get(KEY_COMPONENT_LOOKUP_TABLE) instanceof Map<?,?> map) {
         for (var entry : map.entrySet()) {
           var key = String.valueOf(entry.getKey());
 
@@ -174,14 +179,36 @@ public class ConfigHandler {
         }
       }
 
-      if (config.get("sLut") instanceof Map<?,?> map) {
+      if (config.get(KEY_SCALAR_LOOKUP_TABLE) instanceof Map<?,?> map) {
         for (var entry : map.entrySet()) {
           var key = String.valueOf(entry.getKey());
 
           if (globalLookupTable.keySet().stream().anyMatch(key::equalsIgnoreCase))
-            logger.warning("Duplicate s-lut-entry \"" + key + "\" in " + fileName);
+            logger.warning("Duplicate lut-entry \"" + key + "\" in " + fileName);
 
           globalLookupTable.put(key, entry.getValue());
+        }
+      }
+
+      if (config.get(KEY_COMPONENT_GLOBALS) instanceof Map<?,?> map) {
+        for (var entry : map.entrySet()) {
+          var key = String.valueOf(entry.getKey());
+
+          if (baseEnvironment.doesVariableExist(key))
+            logger.warning("Duplicate globals-entry \"" + key + "\" in " + fileName);
+
+          baseEnvironment.withVariable(key, parseLeafNodes(entry.getValue(), interpreterLogger));
+        }
+      }
+
+      if (config.get(KEY_SCALAR_GLOBALS) instanceof Map<?,?> map) {
+        for (var entry : map.entrySet()) {
+          var key = String.valueOf(entry.getKey());
+
+          if (baseEnvironment.doesVariableExist(key))
+            logger.warning("Duplicate globals-entry \"" + key + "\" in " + fileName);
+
+          baseEnvironment.withVariable(key, entry.getValue());
         }
       }
 
