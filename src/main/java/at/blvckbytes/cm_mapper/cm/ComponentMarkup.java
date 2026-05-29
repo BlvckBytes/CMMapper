@@ -4,7 +4,6 @@ import at.blvckbytes.cm_mapper.mapper.MappingError;
 import at.blvckbytes.component_markup.constructor.SlotType;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import at.blvckbytes.component_markup.markup.ast.node.MarkupNode;
-import at.blvckbytes.component_markup.markup.ast.tag.built_in.BuiltInTagRegistry;
 import at.blvckbytes.component_markup.markup.interpreter.MarkupInterpreter;
 import at.blvckbytes.component_markup.markup.parser.MarkupParseException;
 import at.blvckbytes.component_markup.markup.parser.MarkupParser;
@@ -34,7 +33,7 @@ public class ComponentMarkup {
     var view = InputView.of(markup);
 
     try {
-      this.markupNode = MarkupParser.parse(view, BuiltInTagRegistry.INSTANCE);
+      this.markupNode = MarkupParser.parse(view, CustomTagRegistry.INSTANCE);
     } catch (MarkupParseException e) {
       logger.log(view, e.position, e.getErrorMessage(), null);
 

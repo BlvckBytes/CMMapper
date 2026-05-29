@@ -26,11 +26,11 @@ package at.blvckbytes.cm_mapper;
 
 import at.blvckbytes.cm_mapper.cm.ComponentExpression;
 import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
+import at.blvckbytes.cm_mapper.cm.CustomTagRegistry;
 import at.blvckbytes.cm_mapper.mapper.ConfigMapper;
 import at.blvckbytes.cm_mapper.mapper.MappingError;
 import at.blvckbytes.cm_mapper.mapper.YamlConfig;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
-import at.blvckbytes.component_markup.markup.ast.tag.built_in.BuiltInTagRegistry;
 import at.blvckbytes.component_markup.markup.parser.MarkupParseException;
 import at.blvckbytes.component_markup.markup.parser.MarkupParser;
 import at.blvckbytes.component_markup.util.ErrorScreen;
@@ -270,7 +270,7 @@ public class ConfigHandler {
     var view = InputView.of(String.valueOf(input));
 
     try {
-      return MarkupParser.parse(view, BuiltInTagRegistry.INSTANCE);
+      return MarkupParser.parse(view, CustomTagRegistry.INSTANCE);
     } catch (MarkupParseException e) {
       logger.log(view, e.position, e.getErrorMessage(), null);
     }
