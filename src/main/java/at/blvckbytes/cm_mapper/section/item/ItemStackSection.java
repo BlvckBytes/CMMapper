@@ -23,6 +23,7 @@ public class ItemStackSection extends ConfigSection {
   private @Nullable ComponentMarkup lore;
   private @Nullable ComponentExpression amount;
   private @Nullable ComponentMarkup textures;
+  private @Nullable ComponentExpression glint;
 
   public ItemStackSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
     super(baseEnvironment, interpreterLogger);
@@ -54,6 +55,13 @@ public class ItemStackSection extends ConfigSection {
         finalLore.addAll(additionalLore);
 
       meta.lore(finalLore);
+    }
+
+    if (glint != null) {
+      var glintValue = glint.interpret(null);
+
+      if (glintValue != null)
+        meta.setEnchantmentGlintOverride(environment.getValueInterpreter().asBoolean(glintValue));
     }
 
     if (textures != null) {
