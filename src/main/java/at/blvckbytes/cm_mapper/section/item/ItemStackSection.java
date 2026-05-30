@@ -58,7 +58,7 @@ public class ItemStackSection extends ConfigSection {
     }
 
     if (glint != null) {
-      var glintValue = glint.interpret(null);
+      var glintValue = glint.interpret(environment);
 
       if (glintValue != null)
         meta.setEnchantmentGlintOverride(environment.getValueInterpreter().asBoolean(glintValue));
