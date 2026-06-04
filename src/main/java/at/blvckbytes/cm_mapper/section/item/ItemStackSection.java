@@ -8,6 +8,8 @@ import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvir
 import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import com.cryptomorin.xseries.XMaterial;
 import com.destroystokyo.paper.profile.ProfileProperty;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +26,7 @@ public class ItemStackSection extends ConfigSection {
   private @Nullable ComponentExpression amount;
   private @Nullable ComponentMarkup textures;
   private @Nullable ComponentExpression glint;
+  private @Nullable ComponentExpression hideAdditionalTooltips;
 
   public ItemStackSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
     super(baseEnvironment, interpreterLogger);
@@ -75,6 +78,13 @@ public class ItemStackSection extends ConfigSection {
     }
 
     item.setItemMeta(meta);
+
+    if (hideAdditionalTooltips != null) {
+      var hideValue = hideAdditionalTooltips.interpret(environment);
+
+      if (hideValue != null && environment.getValueInterpreter().asBoolean(hideValue))
+        hideAdditionalTooltips(item);
+    }
   }
 
   public ItemStack build(InterpretationEnvironment environment) {
@@ -101,5 +111,19 @@ public class ItemStackSection extends ConfigSection {
     }
 
     return Material.BARRIER;
+  }
+
+  @SuppressWarnings("UnstableApiUsage")
+  private void hideAdditionalTooltips(ItemStack item) {
+    TooltipDisplay.Builder builder = TooltipDisplay.tooltipDisplay();
+
+    for (var type : item.getDataTypes()) {
+      if (type == DataComponentTypes.CUSTOM_NAME || type == DataComponentTypes.LORE)
+        continue;
+
+      builder.addHiddenComponents(type);
+    }
+
+    item.setData(DataComponentTypes.TOOLTIP_DISPLAY, builder.build());
   }
 }
