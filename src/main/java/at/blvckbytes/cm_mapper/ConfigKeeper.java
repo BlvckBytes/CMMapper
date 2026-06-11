@@ -2,6 +2,7 @@ package at.blvckbytes.cm_mapper;
 
 import at.blvckbytes.cm_mapper.mapper.ConfigMapper;
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -11,7 +12,6 @@ public class ConfigKeeper<T extends ConfigSection> {
   private final ConfigHandler configHandler;
   private final String fileName;
   private final Class<T> rootSectionType;
-  private final Map<ReloadPriority, List<Runnable>> reloadListenersByPriority;
 
   private @Nullable ConfigMapper configMapper;
 
@@ -25,7 +25,6 @@ public class ConfigKeeper<T extends ConfigSection> {
     this.configHandler = configHandler;
     this.fileName = fileName;
     this.rootSectionType = rootSectionType;
-    this.reloadListenersByPriority = new HashMap<>();
     this.rootSection = loadRootSection();
   }
 
@@ -34,26 +33,9 @@ public class ConfigKeeper<T extends ConfigSection> {
     return Objects.requireNonNull(configMapper);
   }
 
-  public void registerReloadListener(Runnable listener, ReloadPriority priority) {
-    reloadListenersByPriority.computeIfAbsent(priority, key -> new ArrayList<>()).add(listener);
-  }
-
-  public void registerReloadListener(Runnable listener) {
-    registerReloadListener(listener, ReloadPriority.MEDIUM);
-  }
-
   public void reload() throws Exception {
     this.rootSection = loadRootSection();
-
-    for (var priority : ReloadPriority.VALUES_IN_CALL_ORDER) {
-      var listeners = reloadListenersByPriority.get(priority);
-
-      if (listeners == null)
-        continue;
-
-      for (var listener : listeners)
-        listener.run();
-    }
+    Bukkit.getPluginManager().callEvent(new ConfigKeeperReloadEvent(this));
   }
 
   private T loadRootSection() throws Exception {
