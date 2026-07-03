@@ -10,9 +10,7 @@ import at.blvckbytes.component_markup.util.InputView;
 import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ComponentExpression {
 
@@ -68,13 +66,13 @@ public class ComponentExpression {
     return (int) finalEnvironment.getValueInterpreter().asLong(value.interpret(finalEnvironment));
   }
 
-  public static Set<Integer> asIntSet(@Nullable ComponentExpression value, @Nullable InterpretationEnvironment environment) {
+  public static List<Integer> asIntList(@Nullable ComponentExpression value, @Nullable InterpretationEnvironment environment) {
     if (value == null)
-      return Collections.emptySet();
+      return Collections.emptyList();
 
     var finalEnvironment = environment == null ? value.baseEnvironment : environment.copy().inheritFrom(value.baseEnvironment, false);
 
-    var result = new HashSet<Integer>();
+    var result = new ArrayList<Integer>();
 
     for (var slotEntry : finalEnvironment.getValueInterpreter().asList(value.interpret(finalEnvironment)))
       result.add((int) finalEnvironment.getValueInterpreter().asLong(slotEntry));

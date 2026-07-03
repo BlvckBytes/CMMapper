@@ -17,7 +17,7 @@ public abstract class PaginatedGuiSection<T extends ConfigSection> extends GuiSe
   protected @Nullable ComponentExpression paginationSlots;
 
   @CSIgnore
-  private Set<Integer> _paginationSlots;
+  private List<Integer> _paginationSlots;
 
   public PaginatedGuiSection(Class<T> itemsSectionClass, InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
     super(itemsSectionClass, baseEnvironment, interpreterLogger);
@@ -27,7 +27,7 @@ public abstract class PaginatedGuiSection<T extends ConfigSection> extends GuiSe
   public void afterParsing(List<Field> fields) throws Exception {
     super.afterParsing(fields);
 
-    _paginationSlots = ComponentExpression.asIntSet(paginationSlots, inventoryEnvironment);
+    _paginationSlots = ComponentExpression.asIntList(paginationSlots, inventoryEnvironment);
 
     for (var paginationSlot : _paginationSlots) {
       if (paginationSlot < 0 || paginationSlot > lastSlot)
@@ -55,7 +55,7 @@ public abstract class PaginatedGuiSection<T extends ConfigSection> extends GuiSe
     }
   }
 
-  public Set<Integer> getPaginationSlots() {
+  public List<Integer> getPaginationSlots() {
     return _paginationSlots;
   }
 }

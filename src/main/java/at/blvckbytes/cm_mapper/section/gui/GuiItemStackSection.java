@@ -9,15 +9,15 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class GuiItemStackSection extends ItemStackSection {
 
   private @Nullable ComponentExpression slots;
 
   @CSIgnore
-  private @Nullable Set<Integer> displaySlots;
+  private @Nullable List<Integer> displaySlots;
 
   public GuiItemStackSection(InterpretationEnvironment baseEnvironment, InterpreterLogger interpreterLogger) {
     super(baseEnvironment, interpreterLogger);
@@ -29,11 +29,11 @@ public class GuiItemStackSection extends ItemStackSection {
   }
 
   public void initializeDisplaySlots(InterpretationEnvironment inventoryEnvironment) {
-    displaySlots = ComponentExpression.asIntSet(slots, inventoryEnvironment);
+    displaySlots = ComponentExpression.asIntList(slots, inventoryEnvironment);
   }
 
-  public Set<Integer> getDisplaySlots() {
-    return displaySlots == null ? Set.of() : displaySlots;
+  public List<Integer> getDisplaySlots() {
+    return displaySlots == null ? Collections.emptyList() : displaySlots;
   }
 
   public void renderInto(Inventory inventory, InterpretationEnvironment environment) {
