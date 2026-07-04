@@ -36,7 +36,6 @@ import at.blvckbytes.component_markup.markup.parser.MarkupParser;
 import at.blvckbytes.component_markup.util.ErrorScreen;
 import at.blvckbytes.component_markup.util.InputView;
 import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
-import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Charsets;
 import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
@@ -222,12 +221,12 @@ public class ConfigHandler {
         if (type == Material.class) {
           var materialExpression = new ComponentMarkup(String.valueOf(input), baseEnvironment, interpreterLogger);
           var materialString = materialExpression.asPlainString(null);
-          var xMaterial = XMaterial.matchXMaterial(materialString);
+          var material = MaterialMatcher.tryMatch(materialString);
 
-          if (xMaterial.isEmpty())
+          if (material == null)
             throw new MappingError("The material \"" + materialString + "\" is not a valid XMaterial-constant");
 
-          return xMaterial.get().get();
+          return material;
         }
 
         if (type == int.class || type == Integer.class) {

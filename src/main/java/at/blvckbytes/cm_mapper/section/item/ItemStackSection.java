@@ -1,12 +1,12 @@
 package at.blvckbytes.cm_mapper.section.item;
 
+import at.blvckbytes.cm_mapper.MaterialMatcher;
 import at.blvckbytes.cm_mapper.cm.ComponentExpression;
 import at.blvckbytes.cm_mapper.cm.ComponentMarkup;
 import at.blvckbytes.cm_mapper.mapper.section.ConfigSection;
 import at.blvckbytes.component_markup.constructor.SlotType;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
-import com.cryptomorin.xseries.XMaterial;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
@@ -102,10 +102,10 @@ public class ItemStackSection extends ConfigSection {
       if (typeName.isBlank())
         return Material.BARRIER;
 
-      var xMaterial = XMaterial.matchXMaterial(typeName);
+      var material = MaterialMatcher.tryMatch(typeName);
 
-      if (xMaterial.isPresent())
-        return xMaterial.get().get();
+      if (material != null)
+        return material;
 
       type.log("Could not locate an XMaterial called \"" + typeName + "\"", null);
     }
