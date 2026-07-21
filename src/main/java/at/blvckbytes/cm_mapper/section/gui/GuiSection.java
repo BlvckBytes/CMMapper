@@ -94,4 +94,8 @@ public class GuiSection<T extends ConfigSection> extends ConfigSection {
   public int getRows() {
     return _rows;
   }
+
+  public @Nullable ComponentMarkup getTitle() {
+    return title;
+  }
 }
