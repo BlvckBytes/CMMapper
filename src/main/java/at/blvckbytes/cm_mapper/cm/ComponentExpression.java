@@ -6,6 +6,7 @@ import at.blvckbytes.component_markup.expression.interpreter.ExpressionInterpret
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import at.blvckbytes.component_markup.expression.parser.ExpressionParseException;
 import at.blvckbytes.component_markup.expression.parser.ExpressionParser;
+import at.blvckbytes.component_markup.expression.tokenizer.ExpressionTokenizeException;
 import at.blvckbytes.component_markup.util.InputView;
 import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,10 @@ public class ComponentExpression {
     try {
       this.expressionNode = ExpressionParser.parse(view, null);
     } catch (ExpressionParseException e) {
+      logger.log(view, e.position, e.getErrorMessage(), null);
+
+      throw new MappingError("The above error occurred while trying to parse an expression");
+    } catch (ExpressionTokenizeException e) {
       logger.log(view, e.position, e.getErrorMessage(), null);
 
       throw new MappingError("The above error occurred while trying to parse an expression");
