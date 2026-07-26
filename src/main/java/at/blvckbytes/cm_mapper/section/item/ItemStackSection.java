@@ -16,9 +16,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ItemStackSection extends ConfigSection {
+
+  // Since I aim to diff-check before redrawing an item in a UI, I require equality between two
+  // items with same textures and otherwise similar metadata. Randomizing each time we create
+  // a head will make equality fail and likely cause client-side flicker, as it will re-render
+  // the item just as well.
+  private static final Map<String, UUID> cachedRandomIdByTexturesValue = new ConcurrentHashMap<>();
 
   private @Nullable ComponentMarkup type;
   private @Nullable ComponentMarkup name;
@@ -71,7 +79,8 @@ public class ItemStackSection extends ConfigSection {
       var texturesValue = textures.asPlainString(environment);
 
       if (!texturesValue.isBlank() && meta instanceof SkullMeta skullMeta) {
-        var profile = Bukkit.createProfile(UUID.randomUUID(), null);
+        var randomId = cachedRandomIdByTexturesValue.computeIfAbsent(texturesValue, k -> UUID.randomUUID());
+        var profile = Bukkit.createProfile(randomId, null);
         profile.setProperty(new ProfileProperty("textures", texturesValue));
         skullMeta.setPlayerProfile(profile);
       }

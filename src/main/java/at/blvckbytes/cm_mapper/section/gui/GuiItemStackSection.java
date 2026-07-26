@@ -5,7 +5,6 @@ import at.blvckbytes.cm_mapper.mapper.section.CSIgnore;
 import at.blvckbytes.cm_mapper.section.item.ItemStackSection;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import at.blvckbytes.component_markup.util.logging.InterpreterLogger;
-import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -36,16 +35,13 @@ public class GuiItemStackSection extends ItemStackSection {
     return displaySlots == null ? Collections.emptyList() : displaySlots;
   }
 
-  public void renderInto(Inventory inventory, InterpretationEnvironment environment) {
+  public void renderInto(ItemConsumer itemConsumer, InterpretationEnvironment environment) {
     if (displaySlots == null)
       return;
 
     var item = build(environment);
-    var inventorySize = inventory.getSize();
 
-    for (var slot : displaySlots) {
-      if (slot < inventorySize)
-        inventory.setItem(slot, item);
-    }
+    for (var slot : displaySlots)
+      itemConsumer.handle(slot, item);
   }
 }
