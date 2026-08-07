@@ -1,6 +1,7 @@
 package at.blvckbytes.cm_mapper.cm;
 
 import at.blvckbytes.cm_mapper.mapper.MappingError;
+import at.blvckbytes.component_markup.constructor.PlainTextComponentConstructor;
 import at.blvckbytes.component_markup.constructor.SlotType;
 import at.blvckbytes.component_markup.expression.interpreter.InterpretationEnvironment;
 import at.blvckbytes.component_markup.markup.ast.node.MarkupNode;
@@ -70,7 +71,13 @@ public class ComponentMarkup {
 
   public String asPlainString(@Nullable InterpretationEnvironment environment) {
     var finalEnvironment = environment == null ? baseEnvironment : environment.copy().inheritFrom(baseEnvironment, false);
-    return markupNode.asPlainText(finalEnvironment, logger);
+
+    return MarkupInterpreter.interpret(
+      markupNode, SlotType.SINGLE_LINE_CHAT, finalEnvironment,
+      PlainTextComponentConstructor.INSTANCE,
+      this::transformPlatformComponentsToText,
+      logger
+    ).get(0);
   }
 
   public List<Component> interpret(SlotType slotType, @Nullable InterpretationEnvironment environment) {
@@ -80,5 +87,14 @@ public class ComponentMarkup {
 
   public void log(String message, @Nullable Throwable e) {
     logger.log(markupNode.positionProvider, 0, message, e);
+  }
+
+  private Object transformPlatformComponentsToText(Object value) {
+    if (!(value instanceof Component component))
+      return value;
+
+    var result = new StringBuilder();
+    AdventureComponentConstructor.INSTANCE.forEachTextOf(component, result::append);
+    return result.toString();
   }
 }
